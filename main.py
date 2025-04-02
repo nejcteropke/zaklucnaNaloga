@@ -1,6 +1,15 @@
 from flask import Flask, render_template
-
+from flask_sqlalchemy import SQLALchemy
+from flask_login import UserMixin
 app = Flask(__name__)
+
+db = SQLALchemy(main)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.integer, primary_key=True)
+    username = db.Column(db.string(30), nullable=False)
+    password = db.Column(db.string(90), nullable=False)
 
 @app.route('/')
 def index():
