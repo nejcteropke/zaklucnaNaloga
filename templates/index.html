@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>BandMade</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    
+    <div class="center-container">
+        <h1 class="animated-title">BANDMADE!</h1>
+        <div class="button-container">
+            <a href="{{ url_for('login') }}"><button class="btn">Prijava</button></a>
+            <a href="{{ url_for('register') }}"><button class="btn">Registracija</button></a>
+        </div>
+    </div>
 </body>
 </html>
