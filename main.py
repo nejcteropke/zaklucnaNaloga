@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from tinydb import TinyDB, Query
 app = Flask(__name__)
 
@@ -19,6 +19,7 @@ def login():
 
         user = db.get(Uporabnik.username == username)
         if user and user['password'] == password:
+            session['username'] = username
             #flash('Login Successful')
             return redirect(url_for('home'))
         else:
@@ -45,7 +46,7 @@ def register():
         
         db.insert({'username': username, 'password': password})
         #flash('Registration successful!')
-        return redirect(url_for('login'))
+        return redirect(url_for('setup_profile'))
     return render_template('register.html')
 
 @app.route('/home')
@@ -58,8 +59,52 @@ def search():
 
 @app.route('/profile')
 def profile():
-    return render_template('profile.html')
+    if 'username' not in session:
+        flash('You need to login')
+        return(url_for('login'))
+    
+    username = session['username']
+    user = db.get(Uporabnik.username == username)
 
+    if not user:
+        #flash('User not found')
+        return redirect(url_for('home'))
+    return render_template('profile.html', user = user)
+
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('edit_profile.html')
+
+@app.route('/setup_profile', methods=['GET', 'POST'])
+def setup_profile():
+    if request.method == 'POST':
+        username = session['username']
+        name = request.form.get('name')
+        surname = request.form.get('surname')
+        genre = request.form.get('genre')
+        instrument = request.form.get('instrument')
+        location = request.form.get('location')
+        goals = request.form.get('goals')
+        experience = request.form.get('experience')
+
+        db.upsert({
+            'name': name,
+            'surname': surname,
+            'genre': genre,
+            'instrument': instrument,
+            'location': location,
+            'goals': goals,
+            'experience': experience
+        }, Uporabnik.username == username)
+        return redirect(url_for('login'))
+    return render_template('setup_profile.html')
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    #flash('Logged out successfully')
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     app.run(debug=True)

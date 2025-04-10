@@ -1,11 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Moj profil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    
+    <header class="profile-header">
+        <div class="header-container">
+            <h1 class="profile-title">Moj profil</h1>
+            <div class="header-buttons">
+                <a href="{{ url_for('home') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Nazaj
+                </a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Odjava
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="profile-container">
+        <div class="profile-card">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h2>{{ user.name }} {{ user.surname }}</h2>
+                <p><strong>Instrument:</strong> {{ user.instrument }}</p>
+                <p><strong>Žanr:</strong> {{ user.genre }}</p>
+                <p><strong>Lokacija:</strong> {{ user.location }}</p>
+                <p><strong>Cilji:</strong> {{ user.goals }}</p>
+                <p><strong>Izkušnje:</strong> {{ user.experience }}</p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>

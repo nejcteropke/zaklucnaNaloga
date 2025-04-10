@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glasbeniki Connect - Uredi profil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <a href="{{ url_for('profile') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Nazaj
+        </a>
+        <h1>Uredi profil</h1>
+    </header>
+
+    <main>
+        <form action="#" method="post" class="edit-profile-form">
+            <label for="name">Ime:</label>
+            <input type="text" id="name" name="name" value="Janez Novak">
+
+            <label for="instrument">Instrument:</label>
+            <input type="text" id="instrument" name="instrument" value="Kitara">
+
+            <label for="location">Lokacija:</label>
+            <input type="text" id="location" name="location" value="Ljubljana">
+
+            <label for="description">Opis:</label>
+            <textarea id="description" name="description">Strasten glasbenik, ki išče nove priložnosti za igranje v bendu.</textarea>
+
+            <button type="submit" class="btn">Shrani spremembe</button>
+        </form>
+    </main>
+</body>
+</html>

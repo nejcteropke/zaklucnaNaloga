@@ -1,1 +1,19 @@
-{"_default": {"1": {"username": "matija", "password": "ma"}, "2": {"username": "nejc", "password": "nejc"}}}
+{
+    "_default": {
+        "1": {
+            "username": "nejc",
+            "password": "nejc",
+            "name": "Nejc",
+            "surname": "Teropke",
+            "genre": "rock",
+            "instrument": "kitara",
+            "location": "Kranj",
+            "goals": "snemanje",
+            "experience": "srednje"
+        },
+        "2": {
+            "username": "ja",
+            "password": "ja"
+        }
+    }
+}

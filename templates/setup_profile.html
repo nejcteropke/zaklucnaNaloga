@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glasbeniki Connect - Nastavi profil</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Nastavi svoj profil</h1>
+    </header>
+
+    <main>
+        <form action="{{ url_for('setup_profile') }}" method="post" class="setup-profile-form">
+            <label for="name">Ime:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="surname">Priimek:</label>
+            <input type="text" id="surname" name="surname" required>
+
+            <label for="genre">Glasbeni žanr:</label>
+            <select id="genre" name="genre" required>
+                <option value="rock">Rock</option>
+                <option value="pop">Pop</option>
+                <option value="jazz">Jazz</option>
+                <option value="klasika">Klasika</option>
+                <option value="metal">Metal</option>
+                <option value="blues">Blues</option>
+                <option value="drugo">Drugo</option>
+            </select>
+
+            <label for="instrument">Instrument:</label>
+            <select id="instrument" name="instrument" required>
+                <option value="kitara">Kitara</option>
+                <option value="bobni">Bobni</option>
+                <option value="bas">Bas</option>
+                <option value="vokali">Vokali</option>
+                <option value="klaviature">Klaviature</option>
+                <option value="drugo">Drugo</option>
+            </select>
+
+            <label for="location">Lokacija:</label>
+            <input type="text" id="location" name="location" required>
+
+            <label for="goals">Cilji:</label>
+            <select id="goals" name="goals" required>
+                <option value="nastopanje">Nastopanje v živo</option>
+                <option value="snemanje">Snemanje glasbe</option>
+                <option value="učenje">Učenje in izboljšanje</option>
+                <option value="drugo">Drugo</option>
+            </select>
+
+            <label for="experience">Stopnja izkušenj:</label>
+            <select id="experience" name="experience" required>
+                <option value="začetnik">Začetnik</option>
+                <option value="srednje">Srednje izkušen</option>
+                <option value="napredno">Napredno</option>
+                <option value="profesionalec">Profesionalec</option>
+            </select>
+
+            <button type="submit" class="btn">Shrani in nadaljuj</button>
+        </form>
+    </main>
+</body>
+</html>
