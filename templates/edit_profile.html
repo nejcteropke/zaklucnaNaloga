@@ -1,35 +1,39 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glasbeniki Connect - Uredi profil</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Edit Profile</title>
 </head>
 <body>
-    <header>
-        <a href="{{ url_for('profile') }}" class="back-btn">
-            <i class="fas fa-arrow-left"></i> Nazaj
-        </a>
-        <h1>Uredi profil</h1>
-    </header>
+    <h1>Edit Profile</h1>
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" value="{{ user.name }}"><br>
 
-    <main>
-        <form action="#" method="post" class="edit-profile-form">
-            <label for="name">Ime:</label>
-            <input type="text" id="name" name="name" value="Janez Novak">
+        <label for="surname">Surname:</label>
+        <input type="text" id="surname" name="surname" value="{{ user.surname }}"><br>
 
-            <label for="instrument">Instrument:</label>
-            <input type="text" id="instrument" name="instrument" value="Kitara">
+        <label for="genre">Genre:</label>
+        <input type="text" id="genre" name="genre" value="{{ user.genre }}"><br>
 
-            <label for="location">Lokacija:</label>
-            <input type="text" id="location" name="location" value="Ljubljana">
+        <label for="instrument">Instrument:</label>
+        <input type="text" id="instrument" name="instrument" value="{{ user.instrument }}"><br>
 
-            <label for="description">Opis:</label>
-            <textarea id="description" name="description">Strasten glasbenik, ki išče nove priložnosti za igranje v bendu.</textarea>
+        <label for="location">Location:</label>
+        <input type="text" id="location" name="location" value="{{ user.location }}"><br>
 
-            <button type="submit" class="btn">Shrani spremembe</button>
-        </form>
-    </main>
+        <label for="goals">Goals:</label>
+        <textarea id="goals" name="goals">{{ user.goals }}</textarea><br>
+
+        <label for="experience">Experience:</label>
+        <textarea id="experience" name="experience">{{ user.experience }}</textarea><br>
+
+        <label for="profile_picture">Profile Picture (URL):</label>
+        <input type="text" id="profile_picture" name="profile_picture" value="{{ user.profile_picture }}"><br>
+
+        <button type="submit">Save Changes</button>
+    </form>
+    <a href="{{ url_for('profile') }}">Back to Profile</a>
 </body>
 </html>

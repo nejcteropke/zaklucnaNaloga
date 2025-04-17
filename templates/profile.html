@@ -6,10 +6,80 @@
     <title>Moj profil</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+
+.profile-header-wrapper {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: rgba(18, 18, 18, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(255, 76, 76, 0.4);
+    z-index: 9999;
+    text-align: right;
+    animation: fadeInText 1.5s ease-out forwards;
+}
+
+.profile-title {
+    margin: 0 0 10px 0;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #ff4c4c;
+    text-shadow: 0 0 10px rgba(255, 76, 76, 0.8);
+}
+
+.header-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.header-buttons a {
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    background: #222;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-buttons .btn-secondary {
+    background: #333;
+}
+
+.header-buttons .btn-secondary:hover {
+    background: #444;
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.1);
+}
+
+.header-buttons .btn-danger {
+    background: linear-gradient(135deg, #ff4c4c, #b00000);
+    box-shadow: 0 0 10px rgba(255, 76, 76, 0.6);
+    border: none;
+}
+
+.header-buttons .btn-danger:hover {
+    background: linear-gradient(135deg, #ff6b6b, #aa0000);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px rgba(255, 76, 76, 0.9);
+}
+
+
+</style>
+
 </head>
+
 <body>
     <header class="profile-header">
-        <div class="header-container">
+        <div class="profile-header-wrapper">
             <h1 class="profile-title">Moj profil</h1>
             <div class="header-buttons">
                 <a href="{{ url_for('home') }}" class="btn btn-secondary">

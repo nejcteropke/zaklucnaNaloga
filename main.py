@@ -17,6 +17,10 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
+        if username == 'admin' and password == 'admin':
+            session['username'] = username
+            return redirect(url_for('admin_panel'))
+
         user = db.get(Uporabnik.username == username)
         if user and user['password'] == password:
             session['username'] = username
@@ -105,6 +109,40 @@ def logout():
     session.pop('username', None)
     #flash('Logged out successfully')
     return redirect(url_for('index'))
+
+@app.route('/edit_orofile', methods=['GET', 'POST'])
+def edit_profile():
+    username = session['username']
+    user = db.get(Uporabnik.username == username)
+    if request.method == 'POST':
+        name = request.form.get('name')
+        surname = request.form.get('surname')
+        genre = request.form.get('genre')
+        instrument = request.form.get('instrument')
+        location = request.form.get('location')
+        goals = request.form.get('goals')
+        experience = request.form.get('experience')
+        profile_picture = request.form.get('profile_picture')
+
+        db.update({
+            'name': name,
+            'surname': surname,
+            'genre': genre,
+            'instrument': instrument,
+            'location': location,
+            'goals': goals,
+            'experience': experience,
+            'profile_picture': profile_picture
+        }, Uporabnik.username == username)
+        return redirect(url_for('profile'))
+    return render_template('edit_profile.html', user=user)
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

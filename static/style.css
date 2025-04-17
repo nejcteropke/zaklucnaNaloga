@@ -1,15 +1,4 @@
 
-/* Header za profil */
-.profile-header {
-    display: flex;
-    justify-content: space-between; /* Naslov na levo, gumbi na desno */
-    align-items: center; /* Vertikalna poravnava na sredino */
-    padding: 20px;
-    background: linear-gradient(45deg, #ff4c4c, #333333);
-    color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-}
 
 .profile-title {
     margin: 0;
@@ -19,9 +8,9 @@
 }
 
 .header-buttons {
-    margin-left: auto; /* Premakne gumbe na desno */
     display: flex;
-    gap: 10px; /* Razmik med gumbi */
+    gap: 10px; /* Razmak med gumbi */
+    justify-content: flex-start; /* Premesti gumbe na levu stranu */
 }
 
 .header-buttons a {
@@ -52,14 +41,16 @@
 }
 
 /* Glavni del profila */
-.profile-container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 20px;
-    background: #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+.profile-header-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    z-index: 999;
 }
+
 
 .profile-card {
     text-align: center;
@@ -93,8 +84,9 @@
     font-size: 0.9em;
     margin-top: 50px;
 }
-    
-    .setup-profile-form {
+
+/* Setup profile form adjustments */
+.setup-profile-form {
     max-width: 500px;
     margin: 50px auto;
     padding: 20px;
@@ -103,7 +95,7 @@
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     color: #fff;
     font-family: Arial, sans-serif;
-    }
+}
     
     .setup-profile-form label {
     display: block;
