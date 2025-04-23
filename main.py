@@ -57,9 +57,7 @@ def register():
 def home():
     return render_template('home.html')
 
-@app.route('/search')
-def search():
-    return render_template('search.html')
+
 
 @app.route('/profile')
 def profile():
@@ -137,10 +135,17 @@ def edit_profile():
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)"""
 
-@app.route('/find_people')
+@app.route('/find_people', methods=['GET','POST'])
 def find_people():
+    vnos = ""
     users = db.all()
-    return render_template('find_people.html', users=users)
+    if request.method == 'POST':
+        vnos = request.form.get('vnos')
+        if vnos:
+            users = db.search((Uporabnik.username.contains(vnos)) | 
+                                (Uporabnik.name.contains(vnos)) | 
+                                (Uporabnik.surname.contains(vnos)))
+    return render_template('find_people.html',users = users, vnos=vnos)
 
 @app.route('/account/<username>')
 def view_account(username):
@@ -149,7 +154,14 @@ def view_account(username):
         flash('User not found')
     return render_template('account.html', user=user)
 
-
+@app.route('/search', methods = ['POST'])
+def search():
+    if request.method == 'POST':
+        vnos = request.form.get('vnos')
+        rezult = db.search((Uporabnik.username.contains(vnos)) | 
+                            (Uporabnik.name.contains(vnos)) | 
+                            (Uporabnik.surname.contains(vnos)))
+        return render_template('search.html', rezult=rezult)
 
 
 

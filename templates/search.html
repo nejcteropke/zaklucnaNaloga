@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <style>
+        /* Iskalno polje */
+.search-form {
+    max-width: 600px;
+    margin: 50px auto;
+    display: flex;
+    gap: 10px;
+}
+
+.search-form input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #222;
+    color: #fff;
+    font-size: 1em;
+}
+
+.search-form button {
+    padding: 10px 20px;
+    background-color: #ff4c4c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.search-form button:hover {
+    background-color: #ff6b6b;
+}
+
+/* Rezultati iskanja */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+ul li {
+    background-color: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+ul li strong {
+    color: #ff4c4c;
+}
+
+ul li a {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #ff4c4c;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+ul li a:hover {
+    background-color: #ff6b6b;
+}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iskanje</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Iskanje glasbenikov</h1>
+    </header>
+    <main>
+        <!-- Iskalni obrazec -->
+        <form action="{{ url_for('search') }}" method="post" class="search-form">
+            <input type="text" name="vnos" placeholder="Vnesi ime, priimek ali uporabniško ime" value="{{ query }}" required>
+            <button type="submit" class="btn">Išči</button>
+        </form>
+
+        <!-- Rezultati iskanja -->
+        {% if results %}
+            <h2>Rezultati iskanja:</h2>
+            <ul>
+                {% for user in results %}
+                    <li>
+                        <strong>Uporabniško ime:</strong> {{ user.username }}<br>
+                        <strong>Ime:</strong> {{ user.name }} {{ user.surname }}<br>
+                        <strong>Instrument:</strong> {{ user.instrument }}<br>
+                        <a href="{{ url_for('view_account', username=user.username) }}" class="btn">Poglej račun</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% elif query %}
+            <p>Ni najdenih rezultatov za "{{ query }}".</p>
+        {% endif %}
+    </main>
+</body>
+</html>
