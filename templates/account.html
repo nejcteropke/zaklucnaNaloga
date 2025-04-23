@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Račun uporabnika</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Račun uporabnika</h1>
+    </header>
+    <main>
+        <div class="account-card">
+            <h2>{{ user.name }} {{ user.surname }}</h2>
+            <p><strong>Uporabniško ime:</strong> {{ user.username }}</p>
+            <p><strong>Instrument:</strong> {{ user.instrument }}</p>
+            <p><strong>Žanr:</strong> {{ user.genre }}</p>
+            <p><strong>Lokacija:</strong> {{ user.location }}</p>
+            <p><strong>Cilji:</strong> {{ user.goals }}</p>
+            <p><strong>Izkušnje:</strong> {{ user.experience }}</p>
+        </div>
+    </main>
+</body>
+</html>

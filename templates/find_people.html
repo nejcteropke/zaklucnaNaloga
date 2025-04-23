@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <style>
+        /* Osnovni layout */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0d0d0d;
+            color: #f2f2f2;
+        }
+
+        /* Header */
+        header {
+            background-color: #111;
+            padding: 30px 0;
+            text-align: center;
+            color: #fff;
+            border-bottom: 2px solid #ff4c4c;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        /* Glavni del */
+        main {
+            padding: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        /* Kartice za uporabnike */
+        main ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: contents; /* da grid deluje tudi z UL/LI */
+        }
+
+        main li {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 12px rgba(255, 76, 76, 0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        main li:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 76, 76, 0.4);
+        }
+
+        main li strong {
+            color: #ff4c4c;
+        }
+
+        /* Gumb za ogled računa */
+        .account-link {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 16px;
+            background-color: #ff4c4c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .account-link:hover {
+            background-color: #e63c3c;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Najdi ljudi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Najdi ljudi</h1>
+    </header>
+    <main>
+        <ul>
+            {% for user in users %}
+                <li>
+                    <strong>Uporabniško ime:</strong> {{ user.username }}<br>
+                    {% if user.name and user.surname %}
+                        <strong>Ime:</strong> {{ user.name }} {{ user.surname }}<br>
+                    {% endif %}
+                    {% if user.instrument %}
+                        <strong>Instrument:</strong> {{ user.instrument }}<br>
+                    {% endif %}
+                    <!-- Gumb za ogled računa -->
+                    <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">Poglej račun</a>
+                </li>
+            {% endfor %}
+        </ul>
+    </main>
+</body>
+</html>

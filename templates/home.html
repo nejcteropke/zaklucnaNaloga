@@ -1,27 +1,128 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
+    <style>
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(ellipse at center, #1a1a1a 0%, #000000 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+/* Header/Nav */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.85);
+    padding: 25px 40px;
+    border-bottom: 1px solid #444;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #ff4c4c;
+    font-weight: bold;
+}
+
+header p {
+    font-size: 1rem;
+    color: #ccc;
+    margin-top: 5px;
+}
+
+/* Profile Icon Button */
+.profile-btn {
+    font-size: 2rem;
+    color: white;
+    transition: 0.3s ease;
+}
+
+.profile-btn:hover {
+    color: #ff4c4c;
+    transform: scale(1.1);
+}
+
+/* Main Hero Section */
+main {
+    text-align: left;
+    padding: 80px 60px;
+    display: flex;
+    flex-direction: row;
+    gap: 60px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Buttons */
+.btn {
+    padding: 14px 26px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #ff4c4c;
+    color: white;
+    text-decoration: none;
+    border-radius: 10px;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 12px rgba(255, 76, 76, 0.4);
+    width: 240px;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #e63c3c;
+    transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+        padding: 40px 20px;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+    </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glasbeniki Connect - Domov</title>
+    <title>BANDMADE</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- Dodaj Font Awesome za ikone -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <header>
-        <h1>Glasbeniki Connect</h1>
-        <p>Poveži se z glasbeniki v tvoji bližini!</p>
-        <!-- Premaknjen gumb Moj profil -->
-        <a href="{{ url_for('profile') }}" class="profile-btn">
-            <i class="fas fa-user-circle"></i>
-        </a>
-    </header>
-
-    <main>
-        <div class="button-container">
-            <a href="{{ url_for('search') }}"><button class="btn">🔍 Išči glasbenike</button></a>
+        <nav class="top-nav">
+            <h1 class="logo">BANDMADE</h1>
+            <a href="{{ url_for('profile') }}" class="profile-btn">
+                <i class="fas fa-user-circle"></i>
+            </a>
+        </nav>
+        <div class="hero">
+            <h2><span>Connect with</span> other musicians.</h2>
+            <p>Let's make good band.</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('find_people') }}" class="btn">Find people</a>
+                <a href="{{ url_for('search') }}" class="btn secondary">🔍 Išči glasbenike</a>
+            </div>
         </div>
-    </main>
+    </header>
 </body>
 </html>

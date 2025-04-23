@@ -75,9 +75,9 @@ def profile():
         return redirect(url_for('home'))
     return render_template('profile.html', user = user)
 
-@app.route('/edit_profile')
+"""@app.route('/edit_profile')
 def edit_profile():
-    return render_template('edit_profile.html')
+    return render_template('edit_profile.html')"""
 
 @app.route('/setup_profile', methods=['GET', 'POST'])
 def setup_profile():
@@ -110,7 +110,7 @@ def logout():
     #flash('Logged out successfully')
     return redirect(url_for('index'))
 
-@app.route('/edit_orofile', methods=['GET', 'POST'])
+"""@app.route('/edit_orofile', methods=['GET', 'POST'])
 def edit_profile():
     username = session['username']
     user = db.get(Uporabnik.username == username)
@@ -135,10 +135,19 @@ def edit_profile():
             'profile_picture': profile_picture
         }, Uporabnik.username == username)
         return redirect(url_for('profile'))
-    return render_template('edit_profile.html', user=user)
+    return render_template('edit_profile.html', user=user)"""
 
+@app.route('/find_people')
+def find_people():
+    users = db.all()
+    return render_template('find_people.html', users=users)
 
-
+@app.route('/account/<username>')
+def view_account(username):
+    user = db.get(Uporabnik.username == username)
+    if not user:
+        flash('User not found')
+    return render_template('account.html', user=user)
 
 
 
