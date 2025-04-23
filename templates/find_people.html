@@ -2,6 +2,14 @@
 <html lang="sl">
 <head>
     <style>
+        /* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
         /* Osnovni layout */
         body {
             margin: 0;
@@ -63,18 +71,254 @@
         .account-link {
             display: inline-block;
             margin-top: 12px;
-            padding: 10px 16px;
-            background-color: #ff4c4c;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-        }
+                padding: 10px 16px;
+                background-color: #ff4c4c;
+                color: white;
+                text-decoration: none;
+                border-radius: 8px;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
 
-        .account-link:hover {
-            background-color: #e63c3c;
-        }
+            .account-link:hover {
+                background-color: #e63c3c;
+            }
+            /* Three Dots Menu Button */
+    .menu-toggle {
+        font-size: 1.8rem;
+        color: white;
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 3px;
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        left: 20px;
+        top: 25px;
+        z-index: 1000;
+        border-radius: 50%;
+        background: rgba(40, 40, 40, 0.8);
+        transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover {
+        background: rgba(60, 60, 60, 0.9);
+    }
+
+    .menu-toggle .dots {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .menu-toggle .dot {
+        width: 6px;
+        height: 6px;
+        background-color: white;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+    .menu-toggle:hover .dot {
+        background-color: #ff3333;
+    }
+    /* Sliding Menu */
+.side-menu {
+    position: fixed;
+    left: -300px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: rgba(15, 15, 15, 0.95);
+    z-index: 999;
+    padding: 100px 20px 40px;
+    transition: all 0.4s ease;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    border-right: 1px solid #222;
+}
+
+.side-menu.open {
+    left: 0;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Menu Items */
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item {
+    padding: 14px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background: rgba(40, 40, 40, 0.4);
+}
+
+.menu-item:hover {
+    background: rgba(255, 51, 51, 0.15);
+    transform: translateX(5px);
+}
+
+.menu-item i {
+    font-size: 1.2rem;
+    width: 24px;
+    color: #ff3333;
+}
+
+.menu-title {
+    font-size: 1.2rem;
+    color: #999;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 3px solid #ff3333;
+}
+/* Hero Section */
+.hero {
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 30px;
+    z-index: 10;
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.hero h2 {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+
+.hero h2 span {
+    color: #ff3333;
+    position: relative;
+    display: inline-block;
+}
+
+.hero h2 span::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #ff3333;
+    transform: scaleX(0);
+    transition: transform 0.5s ease;
+}
+
+.hero:hover h2 span::after {
+    transform: scaleX(1);
+}
+
+.hero p {
+    font-size: 1.6rem;
+    color: #cccccc;
+    margin-bottom: 20px;
+    font-weight: 300;
+}
+
+/* CTA Buttons */
+.cta-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn {
+    padding: 16px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 200px;
+    text-decoration: none;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.4s ease;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    left: 0;
+}
+
+.btn {
+    background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.5);
+}
+
+.btn.secondary {
+    background: linear-gradient(135deg, #333333 0%, #222222 100%);
+    border: 1px solid #444;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.btn.secondary:hover {
+    background: linear-gradient(135deg, #444444 0%, #333333 100%);
+    border-color: #555;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
     </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -82,8 +326,70 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <!-- Menu Toggle Button (Three Dots) -->
+    <button class="menu-toggle" id="menuToggle">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </button>
+    
+    <!-- Sliding Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <h3 class="menu-title">Navigation</h3>
+        <div class="menu-items">
+            <a href="{{ url_for('home') }}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('find_people') }}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Find people</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="menu-item">
+                <i class="fas fa-search"></i>
+                <span>Išči glasbenike</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-music"></i>
+                <span>Jam sessions</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+        </div>
+    </div>
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    
+        
+        
+        
+    
+    <script>
+        // Menu toggle functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('open');
+        });
+        
+        menuOverlay.addEventListener('click', function() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        });
+    </script>
     <header>
         <h1>Najdi ljudi</h1>
+        <div>
+           
+        </div>
     </header>
     <main>
         <ul>
