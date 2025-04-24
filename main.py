@@ -16,7 +16,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
+        #se nedela
         if username == 'admin' and password == 'admin':
             session['username'] = username
             return redirect(url_for('admin_panel'))
@@ -89,7 +89,7 @@ def setup_profile():
         goals = request.form.get('goals')
         experience = request.form.get('experience')
 
-        db.upsert({
+        db.insert({
             'username': username,
             'name': name,
             'surname': surname,
