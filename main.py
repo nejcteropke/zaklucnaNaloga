@@ -10,7 +10,7 @@ app.secret_key = 'matijajepeder'
 @app.route('/')
 def index():
     return render_template('index.html')
-
+#login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -31,7 +31,7 @@ def login():
             return render_template('login.html')
     
     return render_template('login.html')
-
+#register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -58,7 +58,7 @@ def home():
     return render_template('home.html')
 
 
-
+#profile page
 @app.route('/profile')
 def profile():
     if 'username' not in session:
@@ -76,7 +76,7 @@ def profile():
 """@app.route('/edit_profile')
 def edit_profile():
     return render_template('edit_profile.html')"""
-
+#kreiranje profila in dodajanje "lastnosti"
 @app.route('/setup_profile', methods=['GET', 'POST'])
 def setup_profile():
     if request.method == 'POST':
@@ -90,6 +90,7 @@ def setup_profile():
         experience = request.form.get('experience')
 
         db.upsert({
+            'username': username,
             'name': name,
             'surname': surname,
             'genre': genre,
@@ -107,7 +108,7 @@ def logout():
     session.pop('username', None)
     #flash('Logged out successfully')
     return redirect(url_for('index'))
-
+#urejanje profila | ni se dokoncan
 """@app.route('/edit_orofile', methods=['GET', 'POST'])
 def edit_profile():
     username = session['username']
@@ -134,7 +135,7 @@ def edit_profile():
         }, Uporabnik.username == username)
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)"""
-
+#iskanje ljudi
 @app.route('/find_people', methods=['GET','POST'])
 def find_people():
     vnos = ""
@@ -146,14 +147,14 @@ def find_people():
                                 (Uporabnik.name.contains(vnos)) | 
                                 (Uporabnik.surname.contains(vnos)))
     return render_template('find_people.html',users = users, vnos=vnos)
-
+#pogledas profil
 @app.route('/account/<username>')
 def view_account(username):
     user = db.get(Uporabnik.username == username)
     if not user:
         flash('User not found')
     return render_template('account.html', user=user)
-
+#to se ne dela tocno
 @app.route('/search', methods = ['POST'])
 def search():
     if request.method == 'POST':

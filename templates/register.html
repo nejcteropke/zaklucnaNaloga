@@ -36,16 +36,17 @@
         <p>Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
     </div>
 
-    <script>
-        document.getElementById('registerForm').addEventListener('submit', function(event) {
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm_Password').value;
-
-            if (password !== confirmPassword) {
-                event.preventDefault();
-                alert('Passwords do not match!');
-            }
-        });
-    </script>
+    
 </body>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(event) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_Password').value;
+
+        if (password !== confirmPassword) {
+            event.preventDefault();
+            alert('Passwords do not match!');
+        }
+    });
+</script>
 </html>

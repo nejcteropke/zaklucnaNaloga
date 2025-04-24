@@ -369,22 +369,7 @@
         
         
     
-    <script>
-        // Menu toggle functionality
-        const menuToggle = document.getElementById('menuToggle');
-        const sideMenu = document.getElementById('sideMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        
-        menuToggle.addEventListener('click', function() {
-            sideMenu.classList.toggle('open');
-            menuOverlay.classList.toggle('open');
-        });
-        
-        menuOverlay.addEventListener('click', function() {
-            sideMenu.classList.remove('open');
-            menuOverlay.classList.remove('open');
-        });
-    </script>
+    
     <header>
         <h1>Najdi ljudi</h1>
         <div>
@@ -431,4 +416,20 @@
         </ul>
     </main>
 </body>
+<script>
+    // Menu toggle functionality
+    const menuToggle = document.getElementById('menuToggle');
+    const sideMenu = document.getElementById('sideMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    
+    menuToggle.addEventListener('click', function() {
+        sideMenu.classList.toggle('open');
+        menuOverlay.classList.toggle('open');
+    });
+    
+    menuOverlay.addEventListener('click', function() {
+        sideMenu.classList.remove('open');
+        menuOverlay.classList.remove('open');
+    });
+</script>
 </html>
