@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from tinydb import TinyDB, Query
+import bcrypt
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -47,8 +48,11 @@ def register():
         if user:
             flash("Username already exists")
             return render_template('register.html')
+        #hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         
         db.insert({'username': username, 'password': password})
+
+        session['username'] = username
         #flash('Registration successful!')
         return redirect(url_for('setup_profile'))
     return render_template('register.html')
@@ -79,8 +83,11 @@ def edit_profile():
 #kreiranje profila in dodajanje "lastnosti"
 @app.route('/setup_profile', methods=['GET', 'POST'])
 def setup_profile():
+
+    username = session['username']
+
     if request.method == 'POST':
-        username = session['username']
+        
         name = request.form.get('name')
         surname = request.form.get('surname')
         genre = request.form.get('genre')
@@ -89,8 +96,8 @@ def setup_profile():
         goals = request.form.get('goals')
         experience = request.form.get('experience')
 
-        db.insert({
-            'username': username,
+        db.update({
+            
             'name': name,
             'surname': surname,
             'genre': genre,

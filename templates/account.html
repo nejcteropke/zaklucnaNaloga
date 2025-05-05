@@ -3,23 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Račun uporabnika</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Profil glasbenika</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #0d0d0d;
+            color: #f2f2f2;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        header {
+            background-color: #111;
+            padding: 20px 0;
+            text-align: center;
+            color: #fff;
+            border-bottom: 2px solid #ff4c4c;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 10;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        
+        /* Main Content */
+        main {
+            max-width: 900px;
+            margin: 120px auto 50px;
+            padding: 20px;
+        }
+        
+        /* Profile Card */
+        .profile-card {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            box-shadow: 0 5px 30px rgba(255, 76, 76, 0.2);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #ff4c4c 0%, #9b2c2c 100%);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: #333;
+            margin: 0 auto 15px;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+        
+        .profile-name {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            color: white;
+        }
+        
+        .profile-username {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+        }
+        
+        .profile-instrument {
+            display: inline-block;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 6px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .profile-content {
+            padding: 30px;
+        }
+        
+        .profile-section {
+            margin-bottom: 25px;
+        }
+        
+        .profile-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-title {
+            font-size: 1.1rem;
+            color: #ff4c4c;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .info-label {
+            font-size: 0.9rem;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+        }
+        
+        /* About section */
+        .profile-about {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        /* Back Button */
+        .back-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #ff4c4c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .back-button:hover {
+            background-color: #e63c3c;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 76, 76, 0.4);
+        }
+        
+        /* Three Dots Menu Button */
+        .menu-toggle {
+            font-size: 1.8rem;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            left: 20px;
+            top: 25px;
+            z-index: 1000;
+            border-radius: 50%;
+            background: rgba(40, 40, 40, 0.8);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle:hover {
+            background: rgba(60, 60, 60, 0.9);
+        }
+        
+        .menu-toggle .dots {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .menu-toggle .dot {
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-toggle:hover .dot {
+            background-color: #ff3333;
+        }
+        
+        /* Sliding Menu */
+        .side-menu {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.95);
+            z-index: 999;
+            padding: 100px 20px 40px;
+            transition: all 0.4s ease;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+            border-right: 1px solid #222;
+        }
+        
+        .side-menu.open {
+            left: 0;
+        }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Menu Items */
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .menu-item {
+            padding: 14px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: rgba(40, 40, 40, 0.4);
+        }
+        
+        .menu-item:hover {
+            background: rgba(255, 51, 51, 0.15);
+            transform: translateX(5px);
+        }
+        
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            color: #ff3333;
+        }
+        
+        .menu-title {
+            font-size: 1.2rem;
+            color: #999;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #ff3333;
+        }
+        
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            main {
+                margin-top: 100px;
+                padding: 15px;
+            }
+            
+            .profile-header {
+                padding: 30px 20px;
+            }
+            
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 2.5rem;
+            }
+            
+            .profile-name {
+                font-size: 1.8rem;
+            }
+            
+            .profile-content {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <h1>Račun uporabnika</h1>
-    </header>
-    <main>
-        <div class="account-card">
-            <h2>{{ user.name }} {{ user.surname }}</h2>
-            <p><strong>Uporabniško ime:</strong> {{ user.username }}</p>
-            <p><strong>Instrument:</strong> {{ user.instrument }}</p>
-            <p><strong>Žanr:</strong> {{ user.genre }}</p>
-            <p><strong>Lokacija:</strong> {{ user.location }}</p>
-            <p><strong>Cilji:</strong> {{ user.goals }}</p>
-            <p><strong>Izkušnje:</strong> {{ user.experience }}</p>
+    <!-- Menu Toggle Button (Three Dots) -->
+    <button class="menu-toggle" id="menuToggle">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
         </div>
+    </button>
+    
+    <!-- Sliding Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <h3 class="menu-title">Navigation</h3>
+        <div class="menu-items">
+            <a href="{{ url_for('home') }}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('find_people') }}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Find people</span>
+            </a>
+            <a href="{{ url_for('search') }}" class="menu-item">
+                <i class="fas fa-search"></i>
+                <span>Išči glasbenike</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-music"></i>
+                <span>Jam sessions</span>
+            </a>
+            <a href="#" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+        </div>
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+    
+    <header>
+        <h1>Profil glasbenika</h1>
+    </header>
+    
+    <main>
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {{ user.name[0] }}{{ user.surname[0] }}
+                </div>
+                <h2 class="profile-name">{{ user.name }} {{ user.surname }}</h2>
+                <div class="profile-username">@{{ user.username }}</div>
+            </div>
+            
+            <div class="profile-content">
+                <div class="profile-section">
+                    <h3 class="section-title">Osnovne informacije</h3>
+                    <div class="profile-info">
+                        <div class="info-item">
+                            <div class="info-label">Instrument</div>
+                            <div class="info-value">{{ user.instrument }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Žanr</div>
+                            <div class="info-value">{{ user.genre }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Lokacija</div>
+                            <div class="info-value">{{ user.location }}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="profile-section">
+                    <h3 class="section-title">O glasbeniku</h3>
+                    <div class="profile-about">
+                        <div class="info-label">Cilji</div>
+                        <div class="info-value">{{ user.goals }}</div>
+                    </div>
+                    <div class="profile-about">
+                        <div class="info-label">Izkušnje</div>
+                        <div class="info-value">{{ user.experience }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <a href="{{ url_for('find_people') }}" class="back-button">Nazaj na iskanje</a>
     </main>
+    
+    <script>
+        // Menu toggle functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        
+        menuToggle.addEventListener('click', function() {
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('open');
+        });
+        
+        menuOverlay.addEventListener('click', function() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        });
+        
+        // Dodajanje inicialke, če karkoli manjka
+        document.addEventListener('DOMContentLoaded', function() {
+            const avatarEl = document.querySelector('.profile-avatar');
+            const avatarText = avatarEl.textContent.trim();
+            if (!avatarText) {
+                avatarEl.textContent = "MG"; // Privzete inicialke
+            }
+        });
+    </script>
 </body>
 </html>
