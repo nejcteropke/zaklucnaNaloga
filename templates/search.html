@@ -81,8 +81,8 @@ ul li a:hover {
     </header>
     <main>
         <!-- Iskalni obrazec -->
-        <form action="{{ url_for('search') }}" method="post" class="search-form">
-            <input type="text" name="vnos" placeholder="Vnesi ime, priimek ali uporabniško ime" value="{{ query }}" required>
+        <form action="{{ url_for('find_people') }}" method="post" class="search-form">
+            <input type="text" name="vnos" placeholder="Vnesi ime, priimek ali uporabniško ime" value="{{ vnos }}" required>
             <button type="submit" class="btn">Išči</button>
         </form>
 
@@ -99,8 +99,8 @@ ul li a:hover {
                     </li>
                 {% endfor %}
             </ul>
-        {% elif query %}
-            <p>Ni najdenih rezultatov za "{{ query }}".</p>
+        {% elif vnos %}
+            <p>Ni najdenih rezultatov za "{{ vnos }}".</p>
         {% endif %}
     </main>
 </body>

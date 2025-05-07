@@ -116,7 +116,7 @@ def logout():
     #flash('Logged out successfully')
     return redirect(url_for('index'))
 #urejanje profila | ni se dokoncan
-"""@app.route('/edit_orofile', methods=['GET', 'POST'])
+@app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
     username = session['username']
     user = db.get(Uporabnik.username == username)
@@ -141,9 +141,9 @@ def edit_profile():
             'profile_picture': profile_picture
         }, Uporabnik.username == username)
         return redirect(url_for('profile'))
-    return render_template('edit_profile.html', user=user)"""
+    return render_template('edit_profile.html', user=user)
 #iskanje ljudi
-@app.route('/find_people', methods=['GET','POST'])
+"""@app.route('/find_people', methods=['GET','POST'])
 def find_people():
     vnos = ""
     users = db.all()
@@ -153,7 +153,7 @@ def find_people():
             users = db.search((Uporabnik.username.contains(vnos)) | 
                                 (Uporabnik.name.contains(vnos)) | 
                                 (Uporabnik.surname.contains(vnos)))
-    return render_template('find_people.html',users = users, vnos=vnos)
+    return render_template('find_people.html',users = users, vnos=vnos)"""
 #pogledas profil
 @app.route('/account/<username>')
 def view_account(username):
@@ -162,14 +162,21 @@ def view_account(username):
         flash('User not found')
     return render_template('account.html', user=user)
 #to se ne dela tocno
-@app.route('/search', methods = ['POST'])
-def search():
+@app.route('/find_people', methods = ['GET', 'POST'])
+def find_people():
+    vnos = ""
+    results = []
+    
+    users=db.all()
     if request.method == 'POST':
         vnos = request.form.get('vnos')
-        rezult = db.search((Uporabnik.username.contains(vnos)) | 
-                            (Uporabnik.name.contains(vnos)) | 
-                            (Uporabnik.surname.contains(vnos)))
-        return render_template('search.html', rezult=rezult)
+        if vnos and vnos.strip():
+            results = db.search((Uporabnik.username.contains(vnos)) | 
+                                (Uporabnik.name.contains(vnos)) | 
+                                (Uporabnik.surname.contains(vnos)))
+    else:
+        results = []
+    return render_template('find_people.html', results=results, users=users, vnos=vnos)
 
 
 
