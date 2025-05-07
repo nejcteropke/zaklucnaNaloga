@@ -245,6 +245,7 @@
         .profile-info {
             width: 100%;
             text-align: center;
+            
         }
 
         .profile-info h2 {
@@ -291,6 +292,26 @@
             color: var(--primary-color);
             font-weight: 600;
             margin-right: 5px;
+        }
+
+        /* Add social media link styling */
+        .social-link {
+            color: var(--primary-light);
+            text-decoration: none;
+            pointer-events: auto;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .social-link:hover {
+            color: white;
+            text-shadow: 0 0 8px var(--primary-color);
+        }
+
+        .social-link i {
+            font-size: 1.2em;
         }
 
         /* Music-themed decorations */
@@ -395,6 +416,27 @@
                 <p><strong>Lokacija:</strong> {{ user.location }}</p>
                 <p><strong>Cilji:</strong> {{ user.goals }}</p>
                 <p><strong>Izkušnje:</strong> {{ user.experience }}</p>
+                {% if user.snapchat %}
+                    <p><strong>Snapchat:</strong> 
+                        <a href="https://www.snapchat.com/add/{{ user.snapchat }}" target="_blank" class="social-link">
+                            <i class="fab fa-snapchat"></i>{{ user.snapchat }}
+                        </a>
+                    </p>
+                {% endif %}
+                {% if user.instagram %}
+                    <p><strong>Instagram:</strong> 
+                        <a href="https://www.instagram.com/{{ user.instagram }}" target="_blank" class="social-link">
+                            <i class="fab fa-instagram"></i>{{ user.instagram }}
+                        </a>
+                    </p>
+                {% endif %}
+                {% if user.tiktok %}
+                    <p><strong>TikTok:</strong> 
+                        <a href="https://www.tiktok.com/@{{ user.tiktok }}" target="_blank" class="social-link">
+                            <i class="fab fa-tiktok"></i>{{ user.tiktok }}
+                        </a>
+                    </p>
+                {% endif %}
             </div>
              <!--
             <div class="profile-avatar">

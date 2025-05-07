@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from tinydb import TinyDB, Query
-import bcrypt
+import bcrypt, re
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -129,6 +129,9 @@ def edit_profile():
         goals = request.form.get('goals')
         experience = request.form.get('experience')
         profile_picture = request.form.get('profile_picture')
+        snapchat = request.form.get('snapchat')
+        instagram = request.form.get('instagram')
+        tiktok = request.form.get('tiktok')
 
         db.update({
             'name': name,
@@ -138,7 +141,10 @@ def edit_profile():
             'location': location,
             'goals': goals,
             'experience': experience,
-            'profile_picture': profile_picture
+            'profile_picture': profile_picture,
+            'snapchat': snapchat,
+            'instagram': instagram,
+            'tiktok': tiktok
         }, Uporabnik.username == username)
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)
@@ -169,13 +175,14 @@ def find_people():
     
     users=db.all()
     if request.method == 'POST':
-        vnos = request.form.get('vnos')
-        if vnos and vnos.strip():
-            results = db.search((Uporabnik.username.contains(vnos)) | 
-                                (Uporabnik.name.contains(vnos)) | 
-                                (Uporabnik.surname.contains(vnos)))
-    else:
-        results = []
+        vnos = request.form.get('vnos', '').strip()
+        if vnos: 
+            results = db.search((Uporabnik.username.test(lambda value: vnos.lower() in (value or "").lower())) |
+                                (Uporabnik.name.test(lambda value: vnos.lower() in (value or "").lower())) |
+                                (Uporabnik.surname.test(lambda value: vnos.lower() in (value or "").lower())))
+        else:
+            results = []
+
     return render_template('find_people.html', results=results, users=users, vnos=vnos)
 
 
