@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from tinydb import TinyDB, Query
 import bcrypt, re
+import requests
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -44,6 +45,16 @@ def register():
             flash("Passwords do not match")
             return render_template('register.html')
         
+        if not username:  # Generate a username if the field is empty
+            api_url = 'https://api.api-ninjas.com/v1/randomuser'
+            response = requests.get(api_url, headers={'X-Api-Key': 'YOUR_API_KEY'})
+            if response.status_code == requests.codes.ok:
+                random_user = response.json()
+                username = random_user.get('username', 'random_user')
+            else:
+                flash("Failed to generate username")
+                return render_template('register.html')
+
         user = db.get(Uporabnik.username == username)
         if user:
             flash("Username already exists")
@@ -167,7 +178,7 @@ def view_account(username):
     if not user:
         flash('User not found')
     return render_template('account.html', user=user)
-#to se ne dela tocno
+
 @app.route('/find_people', methods = ['GET', 'POST'])
 def find_people():
     vnos = ""
@@ -185,7 +196,16 @@ def find_people():
 
     return render_template('find_people.html', results=results, users=users, vnos=vnos)
 
-
-
+@app.route('/generate_username', methods=['GET'])
+def generate_username():
+    url = 'https://api.api-ninjas.com/v1/randomuser'
+    response = requests.get(url, headers={'X-Api-Key': 'ZnZWZrkHwGuE+xOhT7778g==mXjeyDDTrdIOYgGq'})
+    if response.status_code == requests.codes.ok:
+        random_user = response.json()
+        username = random_user.get('username', 'random_user')
+        return {'username': username}
+    else:
+        return {'error'}, 500
+        
 if __name__ == '__main__':
     app.run(debug=True)
