@@ -12,6 +12,23 @@ app.secret_key = 'matijajepeder'
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin_panel():
+    if 'username' not in session or session['username'] != 'admin':
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        action = request.form.get('action')
+        username = request.form.get('username')
+        if action == 'delete':
+            db.remove(Uporabnik.username == username)
+            flash(f'User {username} deleted successfully')
+        elif action == 'make_admin':
+            db.update({'is_admin': True}, Uporabnik.username == username)
+
+    users = db.all()
+    return render_template('admin.html', users=users)
+
 #login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -33,6 +50,7 @@ def login():
             return render_template('login.html')
     
     return render_template('login.html')
+
 #register
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -140,7 +158,7 @@ def edit_profile():
         goals = request.form.get('goals')
         experience = request.form.get('experience')
         profile_picture = request.form.get('profile_picture')
-        snapchat = request.form.get('snapchat')
+        youtube = request.form.get('youtube')
         instagram = request.form.get('instagram')
         tiktok = request.form.get('tiktok')
 
@@ -153,7 +171,7 @@ def edit_profile():
             'goals': goals,
             'experience': experience,
             'profile_picture': profile_picture,
-            'snapchat': snapchat,
+            'youtube': youtube,
             'instagram': instagram,
             'tiktok': tiktok
         }, Uporabnik.username == username)
@@ -190,7 +208,8 @@ def find_people():
         if vnos: 
             results = db.search((Uporabnik.username.test(lambda value: vnos.lower() in (value or "").lower())) |
                                 (Uporabnik.name.test(lambda value: vnos.lower() in (value or "").lower())) |
-                                (Uporabnik.surname.test(lambda value: vnos.lower() in (value or "").lower())))
+                                (Uporabnik.surname.test(lambda value: vnos.lower() in (value or "").lower())) |
+                                (Uporabnik.instrument.test(lambda value: vnos.lower() in (value or "").lower()))) 
         else:
             results = []
 

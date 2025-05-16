@@ -164,7 +164,7 @@
 <body>
     <h1>Edit Profile</h1>
     <div class="profile-edit-container">
-        <form method="POST">
+        <form method="POST" >
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" value="{{ user.name }}">
@@ -175,26 +175,26 @@
                 <input type="text" id="surname" name="surname" value="{{ user.surname }}">
             </div>
             <div class="form-group">
-                <label for="genre">Glasbeni žanr:</label>
+                <label for="genre">Genre:</label>
                 <select id="genre" name="genre" required>
-                    <option value="rock" {% if user.genre == 'rock' %}selected{% endif %}>Rock</option>
-                    <option value="pop" {% if user.genre == 'pop' %}selected{% endif %}>Pop</option>
-                    <option value="jazz" {% if user.genre == 'jazz' %}selected{% endif %}>Jazz</option>
-                    <option value="klasika" {% if user.genre == 'klasika' %}selected{% endif %}>Klasika</option>
-                    <option value="metal" {% if user.genre == 'metal' %}selected{% endif %}>Metal</option>
-                    <option value="blues" {% if user.genre == 'blues' %}selected{% endif %}>Blues</option>
-                    <option value="drugo" {% if user.genre == 'drugo' %}selected{% endif %}>Drugo</option>
+                    <option value="Rock" {% if user.genre == 'Rock' %}selected{% endif %}>Rock</option>
+                    <option value="Pop" {% if user.genre == 'Pop' %}selected{% endif %}>Pop</option>
+                    <option value="Jazz" {% if user.genre == 'Jazz' %}selected{% endif %}>Jazz</option>
+                    <option value="Classical" {% if user.genre == 'Classical' %}selected{% endif %}>Classical</option>
+                    <option value="Metal" {% if user.genre == 'Metal' %}selected{% endif %}>Metal</option>
+                    <option value="Blues" {% if user.genre == 'Blues' %}selected{% endif %}>Blues</option>
+                    <option value="Other" {% if user.genre == 'Other' %}selected{% endif %}>Other</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="instrument">Instrument:</label>
                 <select id="instrument" name="instrument" required>
-                    <option value="kitara" {% if user.instrument == 'kitara' %}selected{% endif %}>Kitara</option>
-                    <option value="bobni" {% if user.instrument == 'bobni' %}selected{% endif %}>Bobni</option>
-                    <option value="bas" {% if user.instrument == 'bas' %}selected{% endif %}>Bas</option>
-                    <option value="vokali" {% if user.instrument == 'vokali' %}selected{% endif %}>Vokali</option>
-                    <option value="klaviature" {% if user.instrument == 'klaviature' %}selected{% endif %}>Klaviature</option>
-                    <option value="drugo" {% if user.instrument == 'drugo' %}selected{% endif %}>Drugo</option>
+                    <option value="Guitar" {% if user.instrument == 'Guitar' %}selected{% endif %}>Guitar</option>
+                    <option value="Drums" {% if user.instrument == 'Drums' %}selected{% endif %}>Drums</option>
+                    <option value="Bass" {% if user.instrument == 'Bass' %}selected{% endif %}>Bass</option>
+                    <option value="Vocals" {% if user.instrument == 'Vocals' %}selected{% endif %}>Vocals</option>
+                    <option value="Keyboards" {% if user.instrument == 'Keyboards' %}selected{% endif %}>Keyboards</option>
+                    <option value="Other" {% if user.instrument == 'Other' %}selected{% endif %}>Other</option>
                 </select>
             </div>
             <div class="form-group">
@@ -202,32 +202,32 @@
                 <input type="text" id="location" name="location" value="{{ user.location }}">
             </div>
             <div class="form-group">
-                <label for="goals">Cilji:</label>
+                <label for="goals">Goals:</label>
                 <select id="goals" name="goals" required>
-                    <option value="nastopanje" {% if user.goals == 'nastopanje' %}selected{% endif %}>Nastopanje v živo</option>
-                    <option value="snemanje" {% if user.goals == 'snemanje' %}selected{% endif %}>Snemanje glasbe</option>
-                    <option value="učenje" {% if user.goals == 'učenje' %}selected{% endif %}>Učenje in izboljšanje</option>
-                    <option value="drugo" {% if user.goals == 'drugo' %}selected{% endif %}>Drugo</option>
+                    <option value="Live performance" {% if user.goals == 'Live performance' %}selected{% endif %}>Live performance</option>
+                    <option value="Recording music" {% if user.goals == 'Recording music' %}selected{% endif %}>Recording music</option>
+                    <option value="Learning and improvement" {% if user.goals == 'Learning and improvement' %}selected{% endif %}>Learning and improvement</option>
+                    <option value="Other" {% if user.goals == 'Other' %}selected{% endif %}>Other</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="experience">Stopnja izkušenj:</label>
+                <label for="experience">Experience Level:</label>
                 <select id="experience" name="experience" required>
-                    <option value="začetnik" {% if user.experience == 'začetnik' %}selected{% endif %}>Začetnik</option>
-                    <option value="srednje" {% if user.experience == 'srednje' %}selected{% endif %}>Srednje izkušen</option>
-                    <option value="napredno" {% if user.experience == 'napredno' %}selected{% endif %}>Napredno</option>
-                    <option value="profesionalec" {% if user.experience == 'profesionalec' %}selected{% endif %}>Profesionalec</option>
+                    <option value="Beginner" {% if user.experience == 'Beginner' %}selected{% endif %}>Beginner</option>
+                    <option value="Intermediate" {% if user.experience == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+                    <option value="Advanced" {% if user.experience == 'Advanced' %}selected{% endif %}>Advanced</option>
+                    <option value="Professional" {% if user.experience == 'Professional' %}selected{% endif %}>Professional</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="profile_picture">Profile Picture (URL):</label>
-                <input type="text" id="profile_picture" name="profile_picture" value="{{ user.profile_picture }}">
+                <input type="url" id="profile_picture" name="profile_picture" value="{{ user.profile_picture or '' }}">
             </div>
 
             <div class="form-group">
-                <label for="snapchat">Snapchat (URL):</label>
-                <input type="url" id="snapchat" name="snapchat" value="{{ user.snapchat or '' }}">
+                <label for="youtube">Youtube (URL):</label>
+                <input type="url" id="youtube" name="youtube" value="{{ user.youtube or '' }}">
             </div>
 
             <div class="form-group">
@@ -235,8 +235,8 @@
                 <input type="url" id="instagram" name="instagram" value="{{ user.instagram or '' }}">
             </div>
             <div class="form-group">
-                <label for="facebook">Facebook (URL):</label>
-                <input type="url" id="facebook" name="facebook" value="{{ user.facebook or '' }}">
+                <label for="tiktok">TikTok (URL):</label>
+                <input type="url" id="tiktok" name="tiktok" value="{{ user.tiktok or '' }}">
             <button type="submit">Save Changes</button>
         </form>
         <a href="{{ url_for('profile') }}" class="back-link">Back to Profile</a>

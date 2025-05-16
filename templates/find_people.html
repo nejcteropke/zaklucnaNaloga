@@ -665,10 +665,7 @@
                 <i class="fas fa-users"></i>
                 <span>Find people</span>
             </a>
-            <a href="{{ url_for('find_people') }}" class="menu-item">
-                <i class="fas fa-search"></i>
-                <span>Išči glasbenike</span>
-            </a> 
+            
             <a href="#" class="menu-item">
                 <i class="fas fa-music"></i>
                 <span>Jam sessions</span>
@@ -684,7 +681,7 @@
     <div class="menu-overlay" id="menuOverlay"></div>
     
     <header>
-        <h1>Najdi ljudi</h1>
+        <h1>Find People</h1>
         <a href="{{ url_for('profile') }}" class="profile-btn">
             <i class="fas fa-user-circle"></i>
         </a>
@@ -693,7 +690,7 @@
         <div class="search-container">
             <form action="{{ url_for('find_people') }}" method="post" class="search-form" id="searchForm">
                 <input type="text" name="vnos" placeholder="Search" value="{{ vnos }}" required>
-                <button type="submit">Išči</button>
+                <button type="submit">Search</button>
             </form>
         </div>
     </header>
@@ -702,21 +699,21 @@
         <!-- Rezultati iskanja -->
         {% if results %}
             <div class="search-results">
-                <h2>Rezultati iskanja:</h2>
+                <h2>Results:</h2>
                 <ul>
                     {% for user in results %}
                         <li>
-                            <strong>Uporabniško ime:</strong> {{ user.username }}<br>
-                            <strong>Ime:</strong> {{ user.name }} {{ user.surname }}<br>
+                            <strong>Username:</strong> {{ user.username }}<br>
+                            <strong>Name:</strong> {{ user.name }} {{ user.surname }}<br>
                             <strong>Instrument:</strong> {{ user.instrument }}<br>
-                            <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">Poglej račun</a>
+                            <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">View Account</a>
                         </li>
                     {% endfor %}
                 </ul>
             </div>
         {% elif vnos %}
             <div class="no-results">
-                <p>Ni najdenih rezultatov za "{{ vnos }}".</p>
+                <p>No results found for "{{ vnos }}".</p>
             </div>
         {% endif %}
         
@@ -724,17 +721,17 @@
         <ul>
             {% for user in users %}
                 <li>
-                    <strong>Uporabniško ime:</strong> {{ user.username or "Ni na voljo" }}<br>
+                    <strong>Username:</strong> {{ user.username or "Unavailable" }}<br>
                     {% if user.name and user.surname %}
-                        <strong>Ime:</strong> {{ user.name }} {{ user.surname }}<br>
+                        <strong>Name:</strong> {{ user.name }} {{ user.surname }}<br>
                     {% endif %}
                     {% if user.instrument %}
                         <strong>Instrument:</strong> {{ user.instrument }}<br>
                     {% endif %}
                     {% if user.username %}
-                        <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">Poglej račun</a>
+                        <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">View Account</a>
                     {% else %}
-                        <span class="no-account">Profil ni na voljo</span>
+                        <span class="no-account">Profile not available</span>
                     {% endif %}
                 </li>
             {% endfor %}

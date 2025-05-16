@@ -4,66 +4,660 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Glasbeniki Connect - Nastavi profil</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(145deg, #0a0a0a 0%, #1a1a1a 100%);
+            position: relative;
+            overflow-x: hidden;
+            padding: 40px 20px;
+            color: #fff;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(220, 20, 60, 0.08) 0%, rgba(10, 10, 10, 0) 70%);
+            z-index: 0;
+            animation: pulse 15s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        /* Animated notes */
+        .note {
+            position: fixed;
+            color: rgba(220, 20, 60, 0.3);
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            animation: float 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.4;
+            }
+            90% {
+                opacity: 0.4;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        header {
+            position: relative;
+            z-index: 2;
+            margin-bottom: 30px;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            position: relative;
+            display: inline-block;
+            padding: 0 15px;
+        }
+
+        h1::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, crimson, transparent);
+            transform-origin: center;
+            transform: scaleX(0.8);
+            transition: transform 0.5s ease;
+        }
+
+        h1:hover::before {
+            transform: scaleX(1);
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .setup-profile-form {
+            background: rgba(15, 15, 15, 0.95);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5),
+                        0 0 20px rgba(220, 20, 60, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(220, 20, 60, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .setup-profile-form::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(220, 20, 60, 0.15), transparent 70%);
+            z-index: -1;
+            animation: rotate 15s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .setup-profile-form:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+                        0 0 30px rgba(220, 20, 60, 0.4);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ddd;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+            position: relative;
+            padding-left: 8px;
+        }
+
+        label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 14px;
+            background: crimson;
+            border-radius: 3px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(220, 20, 60, 0.5);
+            box-shadow: 0 0 15px rgba(220, 20, 60, 0.2);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23ffffff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: calc(100% - 15px) center;
+            padding-right: 40px;
+        }
+
+        select option {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .btn {
+            width: 100%;
+            background: linear-gradient(45deg, #d30000, #ff0044);
+            color: white;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3),
+                        0 0 15px rgba(220, 20, 60, 0.5);
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 30px;
+            counter-reset: step;
+        }
+
+        .progress-bar::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 2px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: 2px solid rgba(220, 20, 60, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step::before {
+            counter-increment: step;
+            content: counter(step);
+        }
+
+        .progress-step.active {
+            background: crimson;
+            border-color: #fff;
+            box-shadow: 0 0 10px rgba(220, 20, 60, 0.7);
+        }
+
+        .progress-step.completed {
+            background: #2a2a2a;
+            border-color: crimson;
+        }
+
+        .progress-step.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: crimson;
+            font-weight: bold;
+        }
+
+        /* Animation for form elements */
+        .setup-profile-form label,
+        .setup-profile-form input,
+        .setup-profile-form select,
+        .setup-profile-form button {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Delay each form element animation */
+        .setup-profile-form label:nth-child(1) { animation-delay: 0.1s; }
+        .setup-profile-form input:nth-child(2) { animation-delay: 0.2s; }
+        .setup-profile-form label:nth-child(3) { animation-delay: 0.3s; }
+        .setup-profile-form input:nth-child(4) { animation-delay: 0.4s; }
+        .setup-profile-form label:nth-child(5) { animation-delay: 0.5s; }
+        .setup-profile-form select:nth-child(6) { animation-delay: 0.6s; }
+        .setup-profile-form label:nth-child(7) { animation-delay: 0.7s; }
+        .setup-profile-form select:nth-child(8) { animation-delay: 0.8s; }
+        .setup-profile-form label:nth-child(9) { animation-delay: 0.9s; }
+        .setup-profile-form input:nth-child(10) { animation-delay: 1s; }
+        .setup-profile-form label:nth-child(11) { animation-delay: 1.1s; }
+        .setup-profile-form select:nth-child(12) { animation-delay: 1.2s; }
+        .setup-profile-form label:nth-child(13) { animation-delay: 1.3s; }
+        .setup-profile-form select:nth-child(14) { animation-delay: 1.4s; }
+        .setup-profile-form button { animation-delay: 1.5s; }
+
+        /* Glow effect */
+        .glow {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 20, 60, 0.6) 0%, rgba(220, 20, 60, 0) 70%);
+            filter: blur(30px);
+            animation: float-glow 15s infinite ease-in-out;
+            z-index: 0;
+            opacity: 0.3;
+        }
+
+        .glow:nth-child(1) {
+            top: -50px;
+            right: 10%;
+            animation-duration: 17s;
+        }
+
+        .glow:nth-child(2) {
+            bottom: 10%;
+            left: 5%;
+            animation-duration: 21s;
+            animation-delay: 3s;
+        }
+
+        @keyframes float-glow {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(50px, 25px); }
+            50% { transform: translate(25px, 50px); }
+            75% { transform: translate(-25px, 25px); }
+        }
+
+        /* Page transition effect */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .page-transition::before,
+        .page-transition::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 50%;
+            background: #0a0a0a;
+            transition: transform 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        .page-transition::before {
+            top: 0;
+            transform: translateY(-101%);
+        }
+
+        .page-transition::after {
+            bottom: 0;
+            transform: translateY(101%);
+        }
+
+        .page-transition.show::before {
+            transform: translateY(0);
+        }
+
+        .page-transition.show::after {
+            transform: translateY(0);
+        }
+
+        .page-transition.hide::before {
+            transform: translateY(-101%);
+            transition-delay: 0.3s;
+        }
+
+        .page-transition.hide::after {
+            transform: translateY(101%);
+            transition-delay: 0.3s;
+        }
+
+        /* Media queries for responsiveness */
+        @media (max-width: 768px) {
+            .setup-profile-form {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .setup-profile-form {
+                padding: 25px 15px;
+            }
+
+            input, select, .btn {
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="page-transition" id="pageTransition"></div>
+    <div class="glow"></div>
+    <div class="glow"></div>
+
+    <!-- Animated music notes -->
+    <div class="note" style="left: 15%;">♪</div>
+    <div class="note" style="left: 30%;">♫</div>
+    <div class="note" style="left: 55%;">♩</div>
+    <div class="note" style="left: 70%;">♬</div>
+    <div class="note" style="left: 85%;">♪</div>
+
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-step completed"></div>
+            <div class="progress-step active"></div>
+            <div class="progress-step"></div>
+        </div>
+    </div>
+
     <header>
-        <h1>Nastavi svoj profil</h1>
+        <h1>Setup Profile</h1>
     </header>
 
     <main>
         <form action="{{ url_for('setup_profile') }}" method="post" class="setup-profile-form">
-            <label for="name">Ime:</label>
+            <label for="name">Name:</label>
             <input type="text" id="name" name="name" required>
 
-            <label for="surname">Priimek:</label>
+            <label for="surname">Surname:</label>
             <input type="text" id="surname" name="surname" required>
 
-            
-
-
-            <label for="genre">Glasbeni žanr:</label>
+            <label for="genre">Genre:</label>
             <select id="genre" name="genre" required>
-                <option value="rock">Rock</option>
-                <option value="pop">Pop</option>
-                <option value="jazz">Jazz</option>
-                <option value="klasika">Klasika</option>
-                <option value="metal">Metal</option>
-                <option value="blues">Blues</option>
-                <option value="drugo">Drugo</option>
+                <option value="Rock">Rock</option>
+                <option value="Pop">Pop</option>
+                <option value="Jazz">Jazz</option>
+                <option value="Classical">Classical</option>
+                <option value="Metal">Metal</option>
+                <option value="Blues">Blues</option>
+                <option value="Other">Other</option>
             </select>
 
             <label for="instrument">Instrument:</label>
             <select id="instrument" name="instrument" required>
-                <option value="kitara">Kitara</option>
-                <option value="bobni">Bobni</option>
-                <option value="bas">Bas</option>
-                <option value="vokali">Vokali</option>
-                <option value="klaviature">Klaviature</option>
-                <option value="drugo">Drugo</option>
+                <option value="Guitar">Guitar</option>
+                <option value="Drums">Drums</option>
+                <option value="Bass">Bass</option>
+                <option value="Vocals">Vocals</option>
+                <option value="Keyboards">Keyboards</option>
+                <option value="Other">Other</option>
             </select>
 
-            <label for="location">Lokacija:</label>
+            <label for="location">Location:</label>
             <input type="text" id="location" name="location" required>
 
-            <label for="goals">Cilji:</label>
+            <label for="goals">Goals:</label>
             <select id="goals" name="goals" required>
-                <option value="nastopanje">Nastopanje v živo</option>
-                <option value="snemanje">Snemanje glasbe</option>
-                <option value="učenje">Učenje in izboljšanje</option>
-                <option value="drugo">Drugo</option>
+                <option value="Live performance">Live performance</option>
+                <option value="Recording music">Recording music</option>
+                <option value="Learning and improvement">Learning and improvement</option>
+                <option value="Other">Other</option>
             </select>
 
-            <label for="experience">Stopnja izkušenj:</label>
+            <label for="experience">Experience Level:</label>
             <select id="experience" name="experience" required>
-                <option value="začetnik">Začetnik</option>
-                <option value="srednje">Srednje izkušen</option>
-                <option value="napredno">Napredno</option>
-                <option value="profesionalec">Profesionalec</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Professional">Professional</option>
             </select>
 
-            <button type="submit" class="btn">Shrani in nadaljuj</button>
+            <button type="submit" class="btn" id="submitBtn">Save and Continue</button>
         </form>
     </main>
+
+    <script>
+        // Random positioning and animation for music notes
+        document.querySelectorAll('.note').forEach(note => {
+            // Set random delay and duration for each note
+            const delay = Math.random() * 15;
+            const duration = 15 + Math.random() * 10;
+            
+            note.style.animationDelay = `${delay}s`;
+            note.style.animationDuration = `${duration}s`;
+            
+            // Set random horizontal position
+            note.style.left = `${Math.random() * 90}%`;
+        });
+
+        // Page transition effect
+        function showPageTransition() {
+            const transition = document.getElementById('pageTransition');
+            transition.classList.add('show');
+            
+            setTimeout(() => {
+                transition.classList.add('hide');
+                setTimeout(() => {
+                    transition.classList.remove('show', 'hide');
+                }, 1000);
+            }, 500);
+        }
+
+        // Trigger transition when page loads
+        window.addEventListener('load', () => {
+            showPageTransition();
+        });
+
+        // Form submission with transition
+        document.getElementById('submitBtn').addEventListener('click', function(e) {
+            const form = document.querySelector('.setup-profile-form');
+            if (form.checkValidity()) {
+                e.preventDefault();
+                const transition = document.getElementById('pageTransition');
+                transition.classList.add('show');
+                
+                // Wait for animation and then submit the form
+                setTimeout(() => {
+                    form.submit();
+                }, 800);
+            }
+        });
+
+        // Input and select field animations
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                const label = document.querySelector(`label[for="${input.id}"]`);
+                if (label) {
+                    label.style.color = '#ff375f';
+                }
+            });
+            
+            input.addEventListener('blur', () => {
+                const label = document.querySelector(`label[for="${input.id}"]`);
+                if (label) {
+                    label.style.color = '#ddd';
+                }
+            });
+            
+            // Add ripple effect to inputs
+            input.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                const ripple = document.createElement('span');
+                ripple.style.position = 'absolute';
+                ripple.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.width = '100px';
+                ripple.style.height = '100px';
+                ripple.style.left = x - 50 + 'px';
+                ripple.style.top = y - 50 + 'px';
+                ripple.style.transform = 'scale(0)';
+                ripple.style.opacity = '1';
+                ripple.style.transition = 'transform 0.6s, opacity 0.6s';
+                
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.style.transform = 'scale(3)';
+                    ripple.style.opacity = '0';
+                    
+                    setTimeout(() => {
+                        if (ripple.parentNode) {
+                            ripple.parentNode.removeChild(ripple);
+                        }
+                    }, 600);
+                }, 10);
+            });
+        });
+
+        // Add parallax effect to glows and background
+        document.addEventListener('mousemove', (e) => {
+            const glows = document.querySelectorAll('.glow');
+            const moveX = (e.clientX / window.innerWidth - 0.5) * 20;
+            const moveY = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            glows.forEach((glow, index) => {
+                const factor = index === 0 ? 2 : 1;
+                glow.style.transform = `translate(${moveX * factor}px, ${moveY * factor}px)`;
+            });
+            
+            document.body.style.backgroundPosition = `${moveX * 0.5}px ${moveY * 0.5}px`;
+        });
+    </script>
 </body>
 </html>
