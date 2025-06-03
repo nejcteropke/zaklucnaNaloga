@@ -1,0 +1,77 @@
+
+body {
+        background-color: #111;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    h1 {
+        text-align: center;
+        color: #e60000;
+        margin-top: 30px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: 30px auto;
+        background-color: #1a1a1a;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+        transition: box-shadow 0.3s ease;
+    }
+    table:hover {
+        box-shadow: 0 0 25px rgba(255, 0, 0, 0.6);
+    }
+    th, td {
+        border: 1px solid #444;
+        padding: 12px;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+    th {
+        background-color: #e60000;
+        color: #fff;
+        font-size: 1.1em;
+    }
+    tr:nth-child(even) {
+        background-color: #2a2a2a;
+    }
+    tr:hover td {
+        background-color: #333;
+    }
+    form {
+        display: inline;
+    }
+    button {
+        padding: 8px 14px;
+        margin: 2px;
+        background-color: #e60000;
+        border: none;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    button:hover {
+        background-color: #ff1a1a;
+        transform: scale(1.05);
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+    }
+    a {
+        color: #fff;
+        text-decoration: none;
+        font-weight: bold;
+        border: 2px solid #e60000;
+        padding: 8px 16px;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+    }
+    a:hover {
+        background-color: #e60000;
+        color: #fff;
+        box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    }
+    div {
+        text-align: center;
+        margin-bottom: 30px;
+    }

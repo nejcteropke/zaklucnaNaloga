@@ -35,7 +35,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        #se nedela
+        
         if username == 'admin' and password == 'admin':
             session['username'] = username
             return redirect(url_for('admin_panel'))
@@ -77,7 +77,7 @@ def register():
         if user:
             flash("Username already exists")
             return render_template('register.html')
-        #hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
         
         db.insert({'username': username, 'password': password})
 
@@ -177,18 +177,7 @@ def edit_profile():
         }, Uporabnik.username == username)
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)
-#iskanje ljudi
-"""@app.route('/find_people', methods=['GET','POST'])
-def find_people():
-    vnos = ""
-    users = db.all()
-    if request.method == 'POST':
-        vnos = request.form.get('vnos')
-        if vnos:
-            users = db.search((Uporabnik.username.contains(vnos)) | 
-                                (Uporabnik.name.contains(vnos)) | 
-                                (Uporabnik.surname.contains(vnos)))
-    return render_template('find_people.html',users = users, vnos=vnos)"""
+
 #pogledas profil
 @app.route('/account/<username>')
 def view_account(username):
