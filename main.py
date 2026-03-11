@@ -183,8 +183,12 @@ def edit_profile():
 def view_account(username):
     user = db.get(Uporabnik.username == username)
     if not user:
-        flash('User not found')
-    return render_template('account.html', user=user)
+        return redirect(url_for('home'))
+    user_events = db.search(Uporabnik.username == username)
+    return render_template('account.html', user=user, events=user_events)
+
+
+        
 
 @app.route('/find_people', methods = ['GET', 'POST'])
 def find_people():
@@ -214,6 +218,48 @@ def generate_username():
         return {'username': username}
     else:
         return {'error'}, 500
+
+
+
+@app.route('/calendar')
+def calendar():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    events = events_db.search(Event.username == username)
+
+    return render_template('calendar.html', events=events)
+
+events_db = TinyDB('events.json')
+Event = Query()
+
+@app.route('/add_event', methods=['POST'])
+def add_event():
+    if 'username' not in session:
+        flash("Login required")
+        return redirect(url_for('login'))
+
+    username = session['username']
+    date = request.form['date']           # npr. "2026-03-12"
+    title = request.form['title']         # npr. "Vaja"
+    status = request.form['status']       # npr. "busy", "free" ali "maybe"
+
+    db.insert({
+        'username': username,
+        'date': date,
+        'title': title,
+        'status': status
+    })
+    return redirect(request.referrer)      # nazaj na stran od koder smo poslali form
+
+
+
+    
+
+
+
+
         
 if __name__ == '__main__':
     app.run(debug=True)

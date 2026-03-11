@@ -1,151 +1,202 @@
 <!DOCTYPE html>
 <html lang="sl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil glasbenika</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
-    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profil glasbenika</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="{{ url_for('static', filename='account.css') }}">
+<style>
+/* Osnovni stil */
+body{background:#0f0f0f;color:white;font-family:Segoe UI;text-align:center;margin:0;padding:0;}
+header{padding:20px;background:#1c1c1c;}
+h1{margin:0;}
+.profile-card{max-width:600px;margin:20px auto;background:#1c1c1c;padding:20px;border-radius:8px;}
+.profile-avatar img{width:100px;height:100px;border-radius:50%;}
+
+/* Koledar */
+.calendar{max-width:700px;margin:20px auto;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+.day-name{font-weight:bold;color:#ff3333;}
+.day{background:#2a2a2a;padding:10px;border-radius:5px;min-height:60px;position:relative;overflow:auto;}
+.day .day-number{font-weight:bold;margin-bottom:3px;}
+.event-item{font-size:0.75rem;padding:2px 4px;border-radius:4px;margin-top:2px;display:block;color:white;}
+.free{background:#2ecc71;}
+.busy{background:#e74c3c;}
+.maybe{background:#f1c40f;}
+.month-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:10px;}
+.month-nav button{padding:5px 10px;background:#ff3333;border:none;border-radius:5px;color:white;cursor:pointer;}
+.month-nav button:hover{background:#cc0000;}
+
+/* Back button */
+.back-button{display:inline-block;margin:20px auto;padding:10px 20px;background:#ff3333;color:white;text-decoration:none;border-radius:6px;}
+</style>
 </head>
 <body>
-    <!-- Menu Toggle Button (Three Dots) -->
-    <button class="menu-toggle" id="menuToggle">
-        <div class="dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-    </button>
-    
-    <!-- Sliding Side Menu -->
-    <div class="side-menu" id="sideMenu">
-        <h3 class="menu-title">Navigation</h3>
-        <div class="menu-items">
-            <a href="{{ url_for('home') }}" class="menu-item">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-            </a>
-            <a href="{{ url_for('find_people') }}" class="menu-item">
-                <i class="fas fa-users"></i>
-                <span>Find people</span>
-            </a>
-            <a href="{{ url_for('find_people') }}" class="menu-item">
-                <i class="fas fa-search"></i>
-                <span>Išči glasbenike</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-music"></i>
-                <span>Jam sessions</span>
-            </a>
-            <a href="#" class="menu-item">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Events</span>
-            </a>
-        </div>
+
+<!-- Menu Toggle Button (Three Dots) -->
+<button class="menu-toggle" id="menuToggle">
+    <div class="dots">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
     </div>
-    
-    <!-- Menu Overlay -->
-    <div class="menu-overlay" id="menuOverlay"></div>
-    
-    <header>
-        <h1>Musician Profile</h1>
-    </header>
-    
-    <main>
-        <div class="profile-card">
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    {% if user.profile_picture %}
-                        <img src="{{ user.profile_picture }}" alt="{{ user.name }} {{ user.surname }}">
-                    {% else %}
-                        <div class="initials">{{ user.name[0] }}{{ user.surname[0] }}</div>
-                    {% endif %}
+</button>
+
+<!-- Sliding Side Menu -->
+<div class="side-menu" id="sideMenu">
+    <h3 class="menu-title">Navigation</h3>
+    <div class="menu-items">
+        <a href="{{ url_for('home') }}" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="{{ url_for('find_people') }}" class="menu-item"><i class="fas fa-users"></i><span>Find people</span></a>
+        <a href="{{ url_for('find_people') }}" class="menu-item"><i class="fas fa-search"></i><span>Išči glasbenike</span></a>
+        <a href="#" class="menu-item"><i class="fas fa-music"></i><span>Jam sessions</span></a>
+        <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+    </div>
+</div>
+
+<!-- Menu Overlay -->
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<header>
+    <h1>Musician Profile</h1>
+</header>
+
+<main>
+<div class="profile-card">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture }}" alt="{{ user.name }} {{ user.surname }}">
+            {% else %}
+                <div class="initials" style="width:100px;height:100px;background:#444;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;">
+                    {{ user.name[0] }}{{ user.surname[0] if user.surname else '' }}
                 </div>
-                <h2 class="profile-name">{{ user.name }} {{ user.surname }}</h2>
-                <div class="profile-username">@{{ user.username }}</div>
-                <div class="profile-instrument">{{ user.instrument }}</div>
-            </div>
-            
-            <div class="profile-content">
-                <div class="profile-section">
-                    <h3 class="section-title">Basic Information</h3>
-                    <div class="profile-info">
-                        <div class="info-item">
-                            <div class="info-label">Instrument</div>
-                            <div class="info-value">{{ user.instrument }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Genre</div>
-                            <div class="info-value">{{ user.genre }}</div>
-                        </div>
-                        <div class="info-item">
-                            <div class="info-label">Location</div>
-                            <div class="info-value">{{ user.location }}</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="profile-section">
-                    <h3 class="section-title">About</h3>
-                    <div class="profile-about">
-                        <div class="info-label">Goals</div>
-                        <div class="info-value">{{ user.goals }}</div>
-                    </div>
-                    <div class="profile-about">
-                        <div class="info-label">Experience</div>
-                        <div class="info-value">{{ user.experience }}</div>
-                    </div>
-                </div>
-                
-                {% if user.youtube or user.instagram or user.tiktok %}
-                <div class="profile-section">
-                    <h3 class="section-title">Social media</h3>
-                    <div class="social-links">
-                        {% if user.youtube %}
-                        <a href="{{ user.youtube }}" target="_blank" class="social-link">
-                            <i class="fab fa-youtube"></i>
-                            <span>YouTube</span>
-                        </a>
-                        {% endif %}
-                        
-                        {% if user.instagram %}
-                        <a href="{{ user.instagram }}" target="_blank" class="social-link">
-                            <i class="fab fa-instagram"></i>
-                            <span>Instagram</span>
-                        </a>
-                        {% endif %}
-                        
-                        {% if user.tiktok %}
-                        <a href="{{ user.tiktok }}" target="_blank" class="social-link">
-                            <i class="fab fa-tiktok"></i>
-                            <span>TikTok</span>
-                        </a>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endif %}
+            {% endif %}
+        </div>
+        <h2 class="profile-name">{{ user.name }} {{ user.surname }}</h2>
+        <div class="profile-username">@{{ user.username }}</div>
+        <div class="profile-instrument">{{ user.instrument }}</div>
+    </div>
+
+    <div class="profile-content">
+        <div class="profile-section">
+            <h3 class="section-title">Basic Information</h3>
+            <div class="profile-info">
+                <div class="info-item"><div class="info-label">Instrument</div><div class="info-value">{{ user.instrument }}</div></div>
+                <div class="info-item"><div class="info-label">Genre</div><div class="info-value">{{ user.genre }}</div></div>
+                <div class="info-item"><div class="info-label">Location</div><div class="info-value">{{ user.location }}</div></div>
             </div>
         </div>
-        
-        <a href="{{ url_for('find_people') }}" class="back-button">Back</a>
-    </main>
-    
-    <script>
-        // Menu toggle functionality
-        const menuToggle = document.getElementById('menuToggle');
-        const sideMenu = document.getElementById('sideMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        
-        menuToggle.addEventListener('click', function() {
-            sideMenu.classList.toggle('open');
-            menuOverlay.classList.toggle('open');
+        <div class="profile-section">
+            <h3 class="section-title">About</h3>
+            <div class="profile-about"><div class="info-label">Goals</div><div class="info-value">{{ user.goals }}</div></div>
+            <div class="profile-about"><div class="info-label">Experience</div><div class="info-value">{{ user.experience }}</div></div>
+        </div>
+        {% if user.youtube or user.instagram or user.tiktok %}
+        <div class="profile-section">
+            <h3 class="section-title">Social media</h3>
+            <div class="social-links">
+                {% if user.youtube %}<a href="{{ user.youtube }}" target="_blank" class="social-link"><i class="fab fa-youtube"></i><span>YouTube</span></a>{% endif %}
+                {% if user.instagram %}<a href="{{ user.instagram }}" target="_blank" class="social-link"><i class="fab fa-instagram"></i><span>Instagram</span></a>{% endif %}
+                {% if user.tiktok %}<a href="{{ user.tiktok }}" target="_blank" class="social-link"><i class="fab fa-tiktok"></i><span>TikTok</span></a>{% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Koledar -->
+<div class="month-nav">
+    <button id="prevMonth">⬅</button>
+    <h2 id="monthYear"></h2>
+    <button id="nextMonth">➡</button>
+</div>
+<div class="calendar"></div>
+
+<a href="{{ url_for('find_people') }}" class="back-button">Back</a>
+</main>
+
+<script>
+// Koledar setup
+const events = {{ events|tojson }};
+let today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar(month,year){
+    const calendarDiv=document.querySelector('.calendar');
+    calendarDiv.innerHTML='';
+    const dayNames=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    for(let d of dayNames){calendarDiv.innerHTML+=`<div class="day-name">${d}</div>`;}
+
+    const firstDay=new Date(year,month,1).getDay();
+    const daysInMonth=new Date(year,month+1,0).getDate();
+    let startDay=firstDay-1; if(startDay<0) startDay=6;
+
+    for(let i=0;i<startDay;i++){calendarDiv.innerHTML+=`<div class="day"></div>`;}
+
+    for(let i=1;i<=daysInMonth;i++){
+        let dayDiv=document.createElement('div');
+        dayDiv.classList.add('day');
+        dayDiv.innerHTML=`<div class="day-number">${i}</div>`;
+        const dayStr=`${year}-${(month+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`;
+
+        // Dodaj evente
+        const dayEvents = events.filter(e=>e.date===dayStr);
+        for(let ev of dayEvents){
+            const span=document.createElement('span');
+            span.classList.add('event-item',ev.status);
+            span.innerText=ev.title;
+            dayDiv.appendChild(span);
+        }
+
+        // Klik na dan → dodaj event
+        dayDiv.addEventListener('click', ()=>{
+            const title = prompt(`Add event for ${dayStr}:`);
+            if(!title) return;
+            const status = prompt("Status? (free, busy, maybe)", "busy");
+            if(!status) return;
+
+            // Pošljemo form POST
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "{{ url_for('add_event') }}";
+
+            const f1 = document.createElement('input');
+            f1.name = 'date';
+            f1.value = dayStr;
+            form.appendChild(f1);
+
+            const f2 = document.createElement('input');
+            f2.name = 'title';
+            f2.value = title;
+            form.appendChild(f2);
+
+            const f3 = document.createElement('input');
+            f3.name = 'status';
+            f3.value = status;
+            form.appendChild(f3);
+
+            document.body.appendChild(form);
+            form.submit();
         });
-        
-        menuOverlay.addEventListener('click', function() {
-            sideMenu.classList.remove('open');
-            menuOverlay.classList.remove('open');
-        });
-    </script>
+
+        calendarDiv.appendChild(dayDiv);
+    }
+    document.getElementById('monthYear').innerText = monthNames[month]+" "+year;
+}
+
+document.getElementById('prevMonth').addEventListener('click',()=>{
+    currentMonth--; if(currentMonth<0){currentMonth=11; currentYear--;}
+    renderCalendar(currentMonth,currentYear);
+});
+document.getElementById('nextMonth').addEventListener('click',()=>{
+    currentMonth++; if(currentMonth>11){currentMonth=0; currentYear++;}
+    renderCalendar(currentMonth,currentYear);
+});
+
+renderCalendar(currentMonth,currentYear);
+</script>
 </body>
 </html>

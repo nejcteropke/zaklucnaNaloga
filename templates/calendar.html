@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<title>Bandmade Calendar</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<style>
+body{
+    background:#0f0f0f;
+    color:white;
+    font-family:Segoe UI;
+    text-align:center;
+}
+
+h1{
+    margin-top:30px;
+}
+
+.month-navigation{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+    margin-top:20px;
+}
+
+.month-navigation button{
+    padding:5px 15px;
+    background:#ff3333;
+    border:none;
+    border-radius:5px;
+    color:white;
+    cursor:pointer;
+}
+
+.month-navigation button:hover{
+    background:#cc0000;
+}
+
+.calendar{
+    max-width:900px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:10px;
+}
+
+.day-name{
+    font-weight:bold;
+    color:#ff3333;
+}
+
+.day{
+    background:#1c1c1c;
+    padding:10px;
+    border-radius:8px;
+    min-height:80px;
+    transition:0.2s;
+    position:relative;
+    overflow:auto;
+}
+
+.day:hover{
+    background:#2a2a2a;
+    cursor:pointer;
+}
+
+.day .day-number{
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.event-item{
+    font-size:0.75rem;
+    padding:2px 4px;
+    border-radius:4px;
+    margin-top:2px;
+    display:block;
+    color:white;
+}
+
+.free{
+    background:#2ecc71;
+}
+
+.busy{
+    background:#e74c3c;
+}
+
+.maybe{
+    background:#f1c40f;
+}
+
+.back{
+    margin-top:20px;
+    display:inline-block;
+    padding:10px 20px;
+    background:#ff3333;
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+}
+
+.event-form{
+    margin-top:30px;
+}
+
+input, select{
+    padding:8px;
+    margin:5px;
+    border-radius:5px;
+    border:none;
+}
+
+button[type="submit"], #resetCalendar{
+    padding:8px 15px;
+    background:#ff3333;
+    border:none;
+    border-radius:5px;
+    color:white;
+    cursor:pointer;
+}
+
+button[type="submit"]:hover, #resetCalendar:hover{
+    background:#cc0000;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>📅 Bandmade Calendar</h1>
+
+<div class="month-navigation">
+    <button id="prevMonth">⬅</button>
+    <h2 id="monthYear"></h2>
+    <button id="nextMonth">➡</button>
+</div>
+
+<div class="calendar"></div>
+
+<div class="event-form">
+<h2>Add availability</h2>
+<form id="addEventForm">
+    <input type="date" name="date" id="dateInput" required>
+    <input type="text" name="title" placeholder="Example: rehearsal">
+    <select name="status">
+        <option value="free">Free</option>
+        <option value="busy">Busy</option>
+        <option value="maybe">Maybe</option>
+    </select>
+    <button type="submit">Add</button>
+</form>
+</div>
+
+<button id="resetCalendar">Reset Calendar</button>
+
+<a href="{{ url_for('home') }}" class="back">⬅ Back</a>
+
+<script>
+// Dummy events array za test
+let events = [];
+
+// Current month and year
+let today = new Date();
+let currentMonth = today.getMonth();
+let currentYear = today.getFullYear();
+
+const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+function renderCalendar(month, year){
+    const calendarDiv = document.querySelector('.calendar');
+    calendarDiv.innerHTML = '';
+
+    // Day names
+    const dayNames = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+    for(let d of dayNames){
+        calendarDiv.innerHTML += `<div class="day-name">${d}</div>`;
+    }
+
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month+1, 0).getDate();
+
+    let startDay = firstDay - 1;
+    if(startDay < 0) startDay = 6;
+
+    for(let i=0; i<startDay; i++){
+        calendarDiv.innerHTML += `<div class="day"></div>`;
+    }
+
+    for(let i=1; i<=daysInMonth; i++){
+        let dayDiv = document.createElement('div');
+        dayDiv.classList.add('day');
+        dayDiv.innerHTML = `<div class="day-number">${i}</div>`;
+        dayDiv.onclick = ()=> selectDay(i, month+1, year);
+
+        const dayStr = `${year}-${(month+1).toString().padStart(2,'0')}-${i.toString().padStart(2,'0')}`;
+        const dayEvents = events.filter(e => e.date === dayStr);
+        for(let ev of dayEvents){
+            const span = document.createElement('span');
+            span.classList.add('event-item', ev.status);
+            span.innerText = ev.title;
+            dayDiv.appendChild(span);
+        }
+
+        calendarDiv.appendChild(dayDiv);
+    }
+
+    document.getElementById('monthYear').innerText = monthNames[month] + " " + year;
+}
+
+// Navigation
+document.getElementById('prevMonth').addEventListener('click', ()=>{
+    currentMonth--;
+    if(currentMonth < 0){
+        currentMonth = 11;
+        currentYear--;
+    }
+    renderCalendar(currentMonth, currentYear);
+});
+
+document.getElementById('nextMonth').addEventListener('click', ()=>{
+    currentMonth++;
+    if(currentMonth > 11){
+        currentMonth = 0;
+        currentYear++;
+    }
+    renderCalendar(currentMonth, currentYear);
+});
+
+function selectDay(day, month, year){
+    const dateString = `${year}-${month.toString().padStart(2,'0')}-${day.toString().padStart(2,'0')}`;
+    document.getElementById("dateInput").value = dateString;
+}
+
+// Add event
+document.getElementById('addEventForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const date = document.getElementById('dateInput').value;
+    const title = this.title.value;
+    const status = this.status.value;
+
+    if(date && title){
+        events.push({ date, title, status });
+        renderCalendar(currentMonth, currentYear);
+        this.reset();
+    }
+});
+
+// Reset calendar
+document.getElementById('resetCalendar').addEventListener('click', ()=>{
+    if(confirm("Are you sure you want to delete all events?")){
+        events = [];
+        renderCalendar(currentMonth, currentYear);
+    }
+});
+
+// Initial render
+renderCalendar(currentMonth, currentYear);
+</script>
+
+</body>
+</html>
