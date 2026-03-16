@@ -11,7 +11,7 @@ app.secret_key = 'matijajepeder'
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('home'))
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin_panel():
@@ -184,7 +184,7 @@ def view_account(username):
     user = db.get(Uporabnik.username == username)
     if not user:
         return redirect(url_for('home'))
-    user_events = db.search(Uporabnik.username == username)
+    user_events = events_db.search(Event.username == username)
     return render_template('account.html', user=user, events=user_events)
 
 
@@ -234,6 +234,15 @@ def calendar():
 events_db = TinyDB('events.json')
 Event = Query()
 
+@app.route('/reset_calendar', methods=['POST'])
+def reset_calendar():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    events_db.remove(Event.username == username)
+    return redirect(url_for('calendar'))
+
 @app.route('/add_event', methods=['POST'])
 def add_event():
     if 'username' not in session:
@@ -245,13 +254,47 @@ def add_event():
     title = request.form['title']         # npr. "Vaja"
     status = request.form['status']       # npr. "busy", "free" ali "maybe"
 
-    db.insert({
+    if not title:
+        flash("Title is required")
+        return redirect(url_for('calendar'))
+
+    events_db.insert({
         'username': username,
         'date': date,
         'title': title,
         'status': status
     })
     return redirect(request.referrer)      # nazaj na stran od koder smo poslali form
+
+
+
+
+
+
+messages_db = TinyDB('messages.json')
+Message = Query()
+
+@app.route('/chat', methods=['GET','POST'])
+def chat_page():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+
+    if request.method == 'POST':
+        text = request.form.get('message')
+
+        if text:
+            messages_db.insert({
+                'user': username,
+                'text': text
+            })
+
+        return redirect(url_for('chat_page'))
+
+    messages = messages_db.all()
+
+    return render_template('chat.html', messages=messages)
 
 
 

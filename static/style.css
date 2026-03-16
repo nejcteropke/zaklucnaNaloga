@@ -30,11 +30,11 @@
 }
 
 .header-buttons .btn-danger {
-    background-color: #ff4c4c;
+    background-color: #2ecc71;
 }
 
 .header-buttons .btn-danger:hover {
-    background-color: #ff6b6b;
+    background-color: #58d68d;
     transform: scale(1.05);
 }
 
@@ -56,14 +56,14 @@
 
 .profile-avatar {
     font-size: 5em;
-    color: #ff4c4c;
+    color: #2ecc71;
     margin-bottom: 20px;
 }
 
 .profile-card h2 {
     font-size: 2em;
     margin-bottom: 20px;
-    color: #ff4c4c;
+    color: #2ecc71;
 }
 
 .profile-card p {
@@ -98,7 +98,7 @@
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
-    color: #ff4c4c;
+    color: #2ecc71;
 }
     
 .setup-profile-form input,
@@ -118,14 +118,14 @@
 .setup-profile-form select:focus,
 .setup-profile-form textarea:focus {
     outline: none;
-    border-color: #ff4c4c;
-    box-shadow: 0 0 5px rgba(255, 76, 76, 0.8);
+    border-color: #2ecc71;
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.8);
 }
     
 .setup-profile-form button {
     width: 100%;
     padding: 10px;
-    background: linear-gradient(45deg, #ff4c4c, #333333);
+    background: linear-gradient(45deg, #2ecc71, #1c1c1c);
     border: none;
     border-radius: 5px;
     color: #fff;
@@ -136,7 +136,7 @@
 }
     
 .setup-profile-form button:hover {
-    background: linear-gradient(45deg, #ff6b6b, #444444);
+    background: linear-gradient(45deg, #58d68d, #1c1c1c);
     transform: scale(1.05);
 }
     
@@ -146,10 +146,10 @@
     
 header h1 {
     text-align: center;
-    color: #ff4c4c;
+    color: #2ecc71;
     margin-top: 20px;
     font-size: 2.5em;
-    text-shadow: 0 0 10px rgba(255, 76, 76, 0.8);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.8);
 }
 
 .profile-btn {
@@ -164,14 +164,14 @@ header h1 {
     justify-content: center;
     width: 50px;
     height: 50px;
-    background: linear-gradient(45deg, #ff4c4c, #333333);
+    background: linear-gradient(45deg, #2ecc71, #1c1c1c);
     border-radius: 50%;
-    box-shadow: 0 0 10px rgba(255, 76, 76, 0.8), 0 0 20px rgba(51, 51, 51, 0.5);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.8), 0 0 20px rgba(51, 51, 51, 0.5);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
     
 .profile-btn i {
-    background: linear-gradient(45deg, #ff4c4c, #ffffff, #333333);
+    background: linear-gradient(45deg, #2ecc71, #ffffff, #1c1c1c);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: transform 0.3s ease;
@@ -179,7 +179,7 @@ header h1 {
     
 .profile-btn:hover {
     transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(255, 76, 76, 1), 0 0 25px rgba(51, 51, 51, 0.8);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 1), 0 0 25px rgba(51, 51, 51, 0.8);
 }
     
 .profile-btn:hover i {
@@ -222,7 +222,7 @@ body {
     font-size: 72px;
     font-weight: bold;
     color: transparent;
-    background: linear-gradient(45deg, #ff4c4c 25%, #333333 50%, #ff4c4c 75%);
+    background: linear-gradient(45deg, #2ecc71 25%, #1c1c1c 50%, #2ecc71 75%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     transition: background-position 0.5s ease;

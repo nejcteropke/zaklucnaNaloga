@@ -28,8 +28,8 @@ body {
 header {
     position: relative;
     background-color: rgba(0, 0, 0, 0.9);
-    border-bottom: 2px solid #ff3333;
-    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.15);
+    border-bottom: 2px solid #2ecc71;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.15);
     min-height: 100vh;
 }
 
@@ -44,17 +44,17 @@ header {
 
 .logo {
     font-size: 2.8rem;
-    color: #ff3333;
+    color: #2ecc71;
     font-weight: 800;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px rgba(255, 51, 51, 0.4);
+    text-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
     transition: all 0.3s ease;
     text-align: center;
 }
 
 .logo:hover {
     transform: scale(1.05);
-    text-shadow: 0 0 15px rgba(255, 51, 51, 0.7);
+    text-shadow: 0 0 15px rgba(46, 204, 113, 0.7);
 }
 
 /* Three Dots Menu Button */
@@ -99,7 +99,7 @@ header {
 }
 
 .menu-toggle:hover .dot {
-    background-color: #ff3333;
+    background-color: #2ecc71;
 }
 
 /* Profile Button */
@@ -123,9 +123,9 @@ header {
 }
 
 .profile-btn:hover {
-    color: #ff3333;
+    color: #2ecc71;
     transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(255, 51, 51, 0.3);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.3);
 }
 
 /* Sliding Menu */
@@ -186,14 +186,14 @@ header {
 }
 
 .menu-item:hover {
-    background: rgba(255, 51, 51, 0.15);
+    background: rgba(46, 204, 113, 0.15);
     transform: translateX(5px);
 }
 
 .menu-item i {
     font-size: 1.2rem;
     width: 24px;
-    color: #ff3333;
+    color: #2ecc71;
 }
 
 .menu-title {
@@ -201,7 +201,7 @@ header {
     color: #999;
     margin-bottom: 15px;
     padding-left: 10px;
-    border-left: 3px solid #ff3333;
+    border-left: 3px solid #2ecc71;
 }
 
 /* Hero Section */
@@ -226,7 +226,7 @@ header {
 }
 
 .hero h2 span {
-    color: #ff3333;
+    color: #2ecc71;
     position: relative;
     display: inline-block;
 }
@@ -238,7 +238,7 @@ header {
     left: 0;
     width: 100%;
     height: 3px;
-    background-color: #ff3333;
+    background-color: #2ecc71;
     transform: scaleX(0);
     transition: transform 0.5s ease;
 }
@@ -299,15 +299,15 @@ header {
 }
 
 .btn {
-    background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%);
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
     color: white;
     border: none;
-    box-shadow: 0 4px 15px rgba(255, 51, 51, 0.3);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
 }
 
 .btn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.5);
+    box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5);
 }
 
 .btn.secondary {
@@ -357,6 +357,18 @@ header {
         top: 15px;
     }
     
+    .auth-buttons {
+        right: 10px;
+        top: 15px;
+        gap: 5px;
+    }
+    
+    .btn.small {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+        min-width: 70px;
+    }
+    
     .cta-buttons {
         flex-direction: column;
         width: 100%;
@@ -365,16 +377,71 @@ header {
     .btn {
         width: 100%;
     }
+    
+    .featured {
+        padding: 60px 20px;
+    }
+    
+    .featured h2 {
+        font-size: 2rem;
+    }
+    
+    .features {
+        gap: 20px;
+    }
+    
+    .feature {
+        max-width: 100%;
+    }
 }
 
-/* Add subtle animation to the page */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Featured Section */
+.featured {
+    padding: 80px 40px;
+    background: rgba(20, 20, 20, 0.8);
+    text-align: center;
 }
 
-.hero {
-    animation: fadeIn 0.8s ease-out forwards;
+.featured h2 {
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: #2ecc71;
+}
+
+.features {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.feature {
+    background: rgba(30, 30, 30, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+.feature i {
+    font-size: 3rem;
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.feature h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.feature p {
+    color: #cccccc;
+    font-size: 1rem;
 }
     </style>
 </head>
@@ -408,6 +475,12 @@ header {
             <a href="{{ url_for('calendar') }}" class="menu-item">
                 <i class="fas fa-calendar-alt"></i>
                 <span>Events</span>
+
+            </a>
+
+            <a href="{{ url_for('chat_page') }}" class="menu-item">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
             </a>
         </div>
     </div>
@@ -418,19 +491,53 @@ header {
     <header>
         <nav class="top-nav">
             <h1 class="logo">BANDMADE</h1>
-            <a href="{{ url_for('profile') }}" class="profile-btn">
-                <i class="fas fa-user-circle"></i>
-            </a>
+            {% if session.username %}
+                <a href="{{ url_for('profile') }}" class="profile-btn">
+                    <i class="fas fa-user-circle"></i>
+                </a>
+            {% else %}
+                <div class="auth-buttons">
+                    <a href="{{ url_for('login') }}" class="btn small">Login</a>
+                    <a href="{{ url_for('register') }}" class="btn small secondary">Join Now</a>
+                </div>
+            {% endif %}
         </nav>
         
         <div class="hero">
             <h2><span>Connect with</span> other musicians.</h2>
-            <p>Let's make good band.</p>
+            <p>Find bandmates, share your music, and create amazing collaborations.</p>
             <div class="cta-buttons">
-                
+                <a href="{{ url_for('find_people') }}" class="btn">Find Musicians</a>
+                {% if not session.username %}
+                <a href="{{ url_for('register') }}" class="btn secondary">Join Now</a>
+                {% endif %}
             </div>
         </div>
     </header>
+    
+    <!-- Featured Section -->
+    <section class="featured">
+        <div class="container">
+            <h2>Why Choose Bandmade?</h2>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-users"></i>
+                    <h3>Connect</h3>
+                    <p>Find musicians in your area with similar interests.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-calendar-alt"></i>
+                    <h3>Schedule</h3>
+                    <p>Organize jam sessions and events with your calendar.</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-music"></i>
+                    <h3>Create</h3>
+                    <p>Share your music and collaborate on new projects.</p>
+                </div>
+            </div>
+        </div>
+    </section>
     
     
 </body>

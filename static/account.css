@@ -21,7 +21,7 @@ header {
     padding: 20px 0;
     text-align: center;
     color: #fff;
-    border-bottom: 2px solid #ff4c4c;
+    border-bottom: 2px solid #2ecc71;
     position: fixed;
     top: 0;
     width: 100%;
@@ -44,13 +44,13 @@ main {
 .profile-card {
     background-color: #1a1a1a;
     border-radius: 15px;
-    box-shadow: 0 5px 30px rgba(255, 76, 76, 0.2);
+    box-shadow: 0 5px 30px rgba(46, 204, 113, 0.2);
     overflow: hidden;
     margin-bottom: 30px;
 }
 
 .profile-header {
-    background: linear-gradient(135deg, #ff4c4c 0%, #9b2c2c 100%);
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
     padding: 40px 30px;
     text-align: center;
     position: relative;
@@ -140,7 +140,7 @@ main {
 
 .section-title {
     font-size: 1.1rem;
-    color: #ff4c4c;
+    color: #2ecc71;
     margin-bottom: 15px;
     padding-bottom: 5px;
     border-bottom: 1px solid #333;
@@ -208,7 +208,7 @@ main {
 }
 
 .social-link:hover {
-    background-color: rgba(255, 76, 76, 0.15);
+    background-color: rgba(46, 204, 113, 0.15);
     transform: translateX(5px);
 }
 
@@ -216,14 +216,14 @@ main {
     font-size: 1.5rem;
     margin-right: 15px;
     width: 30px;
-    color: #ff4c4c;
+    color: #2ecc71;
 }
 
 /* Back Button */
 .back-button {
     display: inline-block;
     padding: 12px 25px;
-    background-color: #ff4c4c;
+    background-color: #2ecc71;
     color: white;
     text-decoration: none;
     border-radius: 8px;
@@ -233,9 +233,9 @@ main {
 }
 
 .back-button:hover {
-    background-color: #e63c3c;
+    background-color: #27ae60;
     transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(255, 76, 76, 0.4);
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
 }
 
 /* Three Dots Menu Button */

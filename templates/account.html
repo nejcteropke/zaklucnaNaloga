@@ -16,19 +16,20 @@ h1{margin:0;}
 
 /* Koledar */
 .calendar{max-width:700px;margin:20px auto;display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
-.day-name{font-weight:bold;color:#ff3333;}
+.day-name{font-weight:bold;color:#2ecc71;}
 .day{background:#2a2a2a;padding:10px;border-radius:5px;min-height:60px;position:relative;overflow:auto;}
 .day .day-number{font-weight:bold;margin-bottom:3px;}
 .event-item{font-size:0.75rem;padding:2px 4px;border-radius:4px;margin-top:2px;display:block;color:white;}
 .free{background:#2ecc71;}
-.busy{background:#e74c3c;}
+.busy{background:#27ae60;}
 .maybe{background:#f1c40f;}
 .month-nav{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:10px;}
-.month-nav button{padding:5px 10px;background:#ff3333;border:none;border-radius:5px;color:white;cursor:pointer;}
-.month-nav button:hover{background:#cc0000;}
+.month-nav button{padding:5px 10px;background:#2ecc71;border:none;border-radius:5px;color:white;cursor:pointer;}
+.month-nav button:hover{background:#27ae60;}
 
 /* Back button */
-.back-button{display:inline-block;margin:20px auto;padding:10px 20px;background:#ff3333;color:white;text-decoration:none;border-radius:6px;}
+.back-button{display:block;margin:20px auto;padding:10px 20px;background:#2ecc71;color:white;text-decoration:none;border-radius:6px;width:fit-content;}
+.back-button:hover{background:#27ae60;}
 </style>
 </head>
 <body>
@@ -150,37 +151,6 @@ function renderCalendar(month,year){
             span.innerText=ev.title;
             dayDiv.appendChild(span);
         }
-
-        // Klik na dan → dodaj event
-        dayDiv.addEventListener('click', ()=>{
-            const title = prompt(`Add event for ${dayStr}:`);
-            if(!title) return;
-            const status = prompt("Status? (free, busy, maybe)", "busy");
-            if(!status) return;
-
-            // Pošljemo form POST
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = "{{ url_for('add_event') }}";
-
-            const f1 = document.createElement('input');
-            f1.name = 'date';
-            f1.value = dayStr;
-            form.appendChild(f1);
-
-            const f2 = document.createElement('input');
-            f2.name = 'title';
-            f2.value = title;
-            form.appendChild(f2);
-
-            const f3 = document.createElement('input');
-            f3.name = 'status';
-            f3.value = status;
-            form.appendChild(f3);
-
-            document.body.appendChild(form);
-            form.submit();
-        });
 
         calendarDiv.appendChild(dayDiv);
     }

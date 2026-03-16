@@ -28,7 +28,7 @@ h1{
 
 .month-navigation button{
     padding:5px 15px;
-    background:#ff3333;
+    background:#2ecc71;
     border:none;
     border-radius:5px;
     color:white;
@@ -36,7 +36,7 @@ h1{
 }
 
 .month-navigation button:hover{
-    background:#cc0000;
+    background:#27ae60;
 }
 
 .calendar{
@@ -49,7 +49,7 @@ h1{
 
 .day-name{
     font-weight:bold;
-    color:#ff3333;
+    color:#2ecc71;
 }
 
 .day{
@@ -86,7 +86,7 @@ h1{
 }
 
 .busy{
-    background:#e74c3c;
+    background:#27ae60;
 }
 
 .maybe{
@@ -97,7 +97,7 @@ h1{
     margin-top:20px;
     display:inline-block;
     padding:10px 20px;
-    background:#ff3333;
+    background:#2ecc71;
     color:white;
     text-decoration:none;
     border-radius:6px;
@@ -116,7 +116,7 @@ input, select{
 
 button[type="submit"], #resetCalendar{
     padding:8px 15px;
-    background:#ff3333;
+    background:#2ecc71;
     border:none;
     border-radius:5px;
     color:white;
@@ -124,7 +124,7 @@ button[type="submit"], #resetCalendar{
 }
 
 button[type="submit"]:hover, #resetCalendar:hover{
-    background:#cc0000;
+    background:#27ae60;
 }
 
 </style>
@@ -144,7 +144,7 @@ button[type="submit"]:hover, #resetCalendar:hover{
 
 <div class="event-form">
 <h2>Add availability</h2>
-<form id="addEventForm">
+<form id="addEventForm" action="{{ url_for('add_event') }}" method="post">
     <input type="date" name="date" id="dateInput" required>
     <input type="text" name="title" placeholder="Example: rehearsal">
     <select name="status">
@@ -156,13 +156,16 @@ button[type="submit"]:hover, #resetCalendar:hover{
 </form>
 </div>
 
-<button id="resetCalendar">Reset Calendar</button>
+<form id="resetForm" action="{{ url_for('reset_calendar') }}" method="post" style="display:inline;">
+    <button type="submit" id="resetCalendar" onclick="return confirm('Are you sure you want to delete all events?')">Reset Calendar</button>
+</form>
 
 <a href="{{ url_for('home') }}" class="back">⬅ Back</a>
 
 <script>
-// Dummy events array za test
-let events = [];
+// Events from server
+
+let events = {{ events | tojson }};
 
 // Current month and year
 let today = new Date();
@@ -236,27 +239,8 @@ function selectDay(day, month, year){
     document.getElementById("dateInput").value = dateString;
 }
 
-// Add event
-document.getElementById('addEventForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    const date = document.getElementById('dateInput').value;
-    const title = this.title.value;
-    const status = this.status.value;
-
-    if(date && title){
-        events.push({ date, title, status });
-        renderCalendar(currentMonth, currentYear);
-        this.reset();
-    }
-});
-
-// Reset calendar
-document.getElementById('resetCalendar').addEventListener('click', ()=>{
-    if(confirm("Are you sure you want to delete all events?")){
-        events = [];
-        renderCalendar(currentMonth, currentYear);
-    }
-});
+// Add event - now handled by form submit to server
+// Removed preventDefault and local push, as page will reload with updated events
 
 // Initial render
 renderCalendar(currentMonth, currentYear);
