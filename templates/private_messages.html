@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - Instagram Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .messages-wrapper {
+            display: flex;
+            height: 100vh;
+            background: #121212;
+        }
+
+        /* SIDEBAR - List of chats */
+        .sidebar {
+            width: 360px;
+            background: #121212;
+            border-right: 1px solid #222222;
+            display: flex;
+            flex-direction: column;
+            animation: slideInLeft 0.4s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .sidebar-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #222222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: #2ecc71;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #2ecc71;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: #222222;
+            transform: scale(1.05);
+        }
+
+        .search-section {
+            padding: 12px 8px 12px 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 16px;
+            background: #1a1a1a;
+            border: 1px solid #222222;
+            border-radius: 20px;
+            font-size: 15px;
+            outline: none;
+            color: #ffffff;
+            transition: background 0.2s ease;
+        }
+
+        .search-input:focus {
+            background: #222222;
+            border-color: #2ecc71;
+        }
+
+        .tabs {
+            display: flex;
+            padding: 8px;
+            border-bottom: 1px solid #222222;
+            gap: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 0;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #888888;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2ecc71;
+            border-bottom-color: #2ecc71;
+        }
+
+        .tab:hover {
+            color: #aaaaaa;
+        }
+
+        .chat-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-list::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 4px;
+        }
+
+        .chat-list::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+
+        .chat-item {
+            padding: 8px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            animation: fadeInUp 0.4s ease-out backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-item:hover {
+            background: #1a1a1a;
+        }
+
+        .chat-item.unread {
+            background: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .chat-preview {
+            display: flex;
+            gap: 12px;
+            padding: 8px;
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .user-avatar.online::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 14px;
+            height: 14px;
+            background: #31a24c;
+            border: 3px solid white;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .chat-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-name {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .chat-preview-text {
+            font-size: 13px;
+            color: #888888;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unread-badge {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .no-chats {
+            padding: 40px 20px;
+            text-align: center;
+            color: #888888;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .no-chats i {
+            font-size: 48px;
+            opacity: 0.3;
+        }
+
+        /* MAIN CHAT AREA */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #121212;
+        }
+
+        .chat-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #121212;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .chat-empty i {
+            font-size: 64px;
+            color: #333333;
+            margin-bottom: 16px;
+        }
+
+        .chat-empty h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .chat-empty p {
+            color: #888888;
+            margin-bottom: 24px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .back-btn:hover {
+            background: #e4e4e4;
+            transform: translateY(-2px);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .messages-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 50%;
+                border-right: none;
+                border-bottom: 1px solid #e5e5e5;
+            }
+
+            .chat-area {
+                height: 50%;
+            }
+        }
+
+        .home-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .home-button:hover {
+            transform: translateY(-2px);
+            background: #58d68d;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .group-badge {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('home') }}" class="home-button">
+        <i class="fas fa-home"></i> Home
+    </a>
+
+    <div class="messages-wrapper">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Messages</h1>
+                <div class="header-icons">
+                    <button class="icon-btn" title="New message">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                    <a href="{{ url_for('groups_list') }}" class="icon-btn" title="Groups">
+                        <i class="fas fa-users"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <input type="text" class="search-input" placeholder="Search" id="searchInput">
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" data-filter="all">Inbox</button>
+                <button class="tab" data-filter="unread">Unread</button>
+                <button class="tab" data-filter="groups">Groups</button>
+            </div>
+
+            <div class="chat-list">
+                {% if users or groups %}
+                    <!-- PRIVATE CHATS -->
+                    <div class="users-section" id="usersSection">
+                        {% for user in users %}
+                            <a href="{{ url_for('private_chat', recipient=user.username) }}" class="chat-item {% if user.unread_count > 0 %}unread{% endif %}" data-type="user">
+                                <div class="chat-preview">
+                                    <div class="user-avatar online">
+                                        {{ user.username[0].upper() }}
+                                    </div>
+                                    <div class="chat-info">
+                                        <div class="chat-name">{{ user.username }}</div>
+                                        <div class="chat-preview-text">{{ user.get('name', 'Click to chat') }}</div>
+                                    </div>
+                                    {% if user.unread_count > 0 %}
+                                        <div class="unread-badge">{{ user.unread_count }}</div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+
+                    <!-- GROUPS -->
+                    <div class="groups-section" id="groupsSection" style="display: none;">
+                        {% for group in groups %}
+                            <a href="{{ url_for('group_chat', group_id=group.doc_id) }}" class="chat-item {% if group.unread_count > 0 %}unread{% endif %}" data-type="group">
+                                <div class="chat-preview">
+                                    <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                                        <i class="fas fa-users" style="font-size: 24px;"></i>
+                                    </div>
+                                    <div class="chat-info">
+                                        <div class="chat-name">{{ group.name }}</div>
+                                        <div class="chat-preview-text">{{ group.members|length }} members</div>
+                                    </div>
+                                    {% if group.unread_count > 0 %}
+                                        <div class="unread-badge">{{ group.unread_count }}</div>
+                                    {% endif %}
+                                </div>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="no-chats">
+                        <i class="fas fa-envelope"></i>
+                        <p>No messages yet. Start a conversation!</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- MAIN CHAT AREA -->
+        <div class="chat-area">
+            <div class="chat-empty">
+                <i class="fas fa-comments"></i>
+                <h2>Your messages</h2>
+                <p>Select a chat to start messaging</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('searchInput');
+        const tabs = document.querySelectorAll('.tab');
+        const usersSection = document.getElementById('usersSection');
+        const groupsSection = document.getElementById('groupsSection');
+        const chatItems = document.querySelectorAll('.chat-item');
+
+        // Tab filtering
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                const filter = tab.dataset.filter;
+                
+                if (filter === 'all') {
+                    usersSection.style.display = 'block';
+                    groupsSection.style.display = 'block';
+                    chatItems.forEach(item => item.style.display = 'block');
+                } else if (filter === 'unread') {
+                    usersSection.style.display = 'block';
+                    groupsSection.style.display = 'block';
+                    chatItems.forEach(item => {
+                        item.style.display = item.classList.contains('unread') ? 'block' : 'none';
+                    });
+                } else if (filter === 'groups') {
+                    usersSection.style.display = 'none';
+                    groupsSection.style.display = 'block';
+                }
+            });
+        });
+
+        // Search functionality
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            chatItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // Auto-scroll for animations
+        window.addEventListener('load', () => {
+            const chatList = document.querySelector('.chat-list');
+            chatList.scrollTop = 0;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ group.name }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #121212;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .chat-page {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #121212;
+        }
+
+        .chat-header {
+            background: #121212;
+            border-bottom: 1px solid #222222;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            padding: 8px 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #2ecc71;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .group-info {
+            display: flex;
+            flex-direction: column;
+            color: #ffffff;
+        }
+
+        .group-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: #2ecc71;
+        }
+
+        .group-status {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #2ecc71;
+            transition: all 0.2s ease;
+        }
+
+        .header-icon:hover {
+            background: #222222;
+            transform: scale(1.05);
+        }
+
+        .members-modal {
+            display: none;
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: #121212;
+            border-radius: 12px;
+            box-shadow: 0 5px 40px rgba(0,0,0,0.16);
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 999;
+            animation: slideDown 0.2s ease;
+        }
+
+        .members-modal.active {
+            display: block;
+        }
+
+        .members-modal h3 {
+            padding: 16px;
+            border-bottom: 1px solid #222222;
+            font-size: 15px;
+            font-weight: 600;
+            color: #2ecc71;
+        }
+
+        .member-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #1a1a1a;
+            transition: background 0.2s ease;
+            color: #ffffff;
+        }
+
+        .member-item:hover {
+            background: #1a1a1a;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .member-status {
+            font-size: 12px;
+            color: #888888;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            scroll-behavior: smooth;
+            background: #121212;
+        }
+
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .messages-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 4px;
+        }
+
+        .messages-container::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+
+        .message-group {
+            margin-bottom: 16px;
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .message.own {
+            justify-content: flex-end;
+        }
+
+        .message:not(.own) .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            display: flex;
+            flex-direction: column;
+            max-width: 60%;
+        }
+
+        .message:not(.own) .message-content {
+            align-items: flex-start;
+        }
+
+        .message.own .message-content {
+            align-items: flex-end;
+        }
+
+        .sender-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 4px;
+            display: none;
+        }
+
+        .message:not(.own) .sender-name {
+            display: block;
+        }
+
+        .bubble {
+            padding: 12px 16px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            font-size: 15px;
+            line-height: 1.4;
+            animation: bubbleScale 0.3s ease-out;
+        }
+
+        @keyframes bubbleScale {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .message.own .bubble {
+            background: #2ecc71;
+            color: #121212;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .message:not(.own) .bubble {
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .message-form {
+            background: #121212;
+            border-top: 1px solid #222222;
+            padding: 12px 16px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #222222;
+            border-radius: 20px;
+            font-size: 15px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            max-height: 100px;
+            background: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .message-input:focus {
+            border-color: #2ecc71;
+            box-shadow: 0 0 0 1px rgba(46, 204, 113, 0.2);
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2ecc71;
+            border: none;
+            color: #121212;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 3px 12px rgba(46, 204, 113, 0.4);
+        }
+
+        .send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .extra-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            border: none;
+            color: #2ecc71;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s ease;
+        }
+
+        .extra-btn:hover {
+            background: #222222;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-page">
+        <!-- HEADER -->
+        <div class="chat-header">
+            <div class="header-left">
+                <a href="{{ url_for('private_messages') }}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div class="group-info">
+                    <div class="group-name">{{ group.name }}</div>
+                    <div class="group-status">{{ group.members|length }} members</div>
+                </div>
+            </div>
+            <div class="header-icons">
+                <button class="header-icon" id="membersBtn" title="Members">
+                    <i class="fas fa-users"></i>
+                </button>
+                <button class="header-icon" title="Add members">
+                    <a href="{{ url_for('add_members', group_id=group.doc_id) }}" style="color: #333; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                        <i class="fas fa-user-plus"></i>
+                    </a>
+                </button>
+                <button class="header-icon" id="leaveGroupBtn" title="Leave group">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MEMBERS MODAL -->
+        <div class="members-modal" id="membersModal">
+            <h3>Members</h3>
+            {% for member in members %}
+                <div class="member-item">
+                    <div class="member-avatar">{{ member.username[0].upper() }}</div>
+                    <div class="member-info">
+                        <div class="member-name">{{ member.username }}</div>
+                        <div class="member-status">
+                            {% if member.username == group.creator %}
+                                Admin
+                            {% else %}
+                                Member
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- MESSAGES -->
+        <div class="messages-container" id="messagesContainer">
+            {% for message in messages %}
+                <div class="message-group">
+                    <div class="message {% if message.sender == session.username %}own{% endif %}">
+                        {% if message.sender != session.username %}
+                            <div class="avatar">{{ message.sender[0].upper() }}</div>
+                        {% endif %}
+                        <div class="message-content">
+                            {% if message.sender != session.username %}
+                                <div class="sender-name">{{ message.sender }}</div>
+                            {% endif %}
+                            <div class="bubble">{{ message.text }}</div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- MESSAGE FORM -->
+        <form class="message-form" method="POST" id="messageForm">
+            <div class="input-wrapper">
+                <button type="button" class="extra-btn">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <input 
+                    type="text" 
+                    name="message" 
+                    class="message-input" 
+                    placeholder="Aa" 
+                    id="messageInput" 
+                    required
+                    autocomplete="off"
+                >
+            </div>
+            <button type="submit" class="send-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageInput = document.getElementById('messageInput');
+        const messageForm = document.getElementById('messageForm');
+        const membersBtn = document.getElementById('membersBtn');
+        const membersModal = document.getElementById('membersModal');
+        const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+
+        // Auto scroll to bottom
+        function scrollToBottom() {
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        window.addEventListener('load', scrollToBottom);
+
+        // Toggle members modal
+        membersBtn.addEventListener('click', () => {
+            membersModal.classList.toggle('active');
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!membersBtn.contains(e.target) && !membersModal.contains(e.target)) {
+                membersModal.classList.remove('active');
+            }
+        });
+
+        // Leave group
+        leaveGroupBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to leave this group?')) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ url_for("leave_group", group_id=group.doc_id) }}';
+                document.body.appendChild(form);
+                form.submit();
+            }
+        });
+
+        // Auto-grow textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+
+        // Send message on Enter
+        messageInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                messageForm.submit();
+            }
+        });
+
+        // Focus input on load
+        messageInput.focus();
+    </script>
+</body>
+</html>

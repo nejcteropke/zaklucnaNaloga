@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <div class="page-transition" id="pageTransition"></div>
-    <div class="glow"></div>
-    <div class="glow"></div>
-    
     <div class="login-container">
         <h2>Create an account</h2>
         <div class="flashes">
@@ -97,71 +93,15 @@
         
         confirmInput.addEventListener('input', function() {
             if (this.value !== passwordInput.value) {
-                this.style.borderColor = 'rgba(255, 71, 87, 0.7)';
-                this.style.boxShadow = '0 0 10px rgba(255, 71, 87, 0.3)';
+                this.style.borderColor = 'rgba(46, 204, 113, 0.7)';
+                this.style.boxShadow = '0 0 10px rgba(46, 204, 113, 0.3)';
             } else {
-                this.style.borderColor = 'rgba(46, 213, 115, 0.7)';
-                this.style.boxShadow = '0 0 10px rgba(46, 213, 115, 0.3)';
+                this.style.borderColor = 'rgba(46, 204, 113, 0.7)';
+                this.style.boxShadow = '0 0 10px rgba(46, 204, 113, 0.5)';
             }
         });
 
-        // Add some animated background elements
-        function createParticles() {
-            const container = document.body;
-            const particleCount = 20;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.style.position = 'absolute';
-                particle.style.width = Math.random() * 3 + 1 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.backgroundColor = 'rgba(255, 255, 255, ' + (Math.random() * 0.2 + 0.1) + ')';
-                particle.style.borderRadius = '50%';
-                particle.style.pointerEvents = 'none';
-                
-                // Random position
-                particle.style.left = Math.random() * 100 + 'vw';
-                particle.style.top = Math.random() * 100 + 'vh';
-                
-                // Animation
-                particle.style.animation = 'float ' + (Math.random() * 15 + 10) + 's infinite linear';
-                particle.style.opacity = Math.random() * 0.5 + 0.1;
-                
-                container.appendChild(particle);
-            }
-        }
-        
-        // Call the function to create particles
-        createParticles();
-        // Page transition effect
-    function showPageTransition() {
-        const transition = document.getElementById('pageTransition');
-        transition.classList.add('show');
-        
-        setTimeout(() => {
-            transition.classList.add('hide');
-            setTimeout(() => {
-                transition.classList.remove('show', 'hide');
-            }, 1000);
-        }, 500);
-    }
 
-    // Trigger transition when page loads
-    window.addEventListener('load', () => {
-        showPageTransition();
-    });
-
-    // Form submission with transition
-    document.querySelector('form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const transition = document.getElementById('pageTransition');
-        transition.classList.add('show');
-        
-        // Wait for animation and then submit the form
-        setTimeout(() => {
-            this.submit();
-        }, 800);
-    });
     </script>
 </body>
 </html>

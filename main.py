@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from tinydb import TinyDB, Query
 import bcrypt, re
 import requests
+import datetime
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -274,30 +275,262 @@ def add_event():
 messages_db = TinyDB('messages.json')
 Message = Query()
 
+private_messages_db = TinyDB('private_messages.json')
+PrivateMessage = Query()
+
+groups_db = TinyDB('groups.json')
+Group = Query()
+
+group_messages_db = TinyDB('group_messages.json')
+GroupMessage = Query()
+
 @app.route('/chat', methods=['GET','POST'])
 def chat_page():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return redirect(url_for('private_messages'))
+
+@app.route('/private_chat/<recipient>', methods=['GET', 'POST'])
+def private_chat(recipient):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    sender = session['username']
+
+    if sender == recipient:
+        flash('Cannot send messages to yourself')
+        return redirect(url_for('private_messages'))
+
+    # Check if recipient exists
+    user_exists = db.get(Uporabnik.username == recipient)
+    if not user_exists:
+        flash('User not found')
+        return redirect(url_for('private_messages'))
+
+    if request.method == 'POST':
+        text = request.form.get('message')
+        if text:
+            private_messages_db.insert({
+                'sender': sender,
+                'recipient': recipient,
+                'text': text,
+                'timestamp': datetime.datetime.now().isoformat(),
+                'read': False
+            })
+        return redirect(url_for('private_chat', recipient=recipient))
+
+    # Get messages between sender and recipient (both directions)
+    messages = private_messages_db.search(
+        ((PrivateMessage.sender == sender) & (PrivateMessage.recipient == recipient)) |
+        ((PrivateMessage.sender == recipient) & (PrivateMessage.recipient == sender))
+    )
+    messages = sorted(messages, key=lambda x: x.get('timestamp', ''))
+
+    # Mark messages from recipient as read
+    private_messages_db.update({'read': True}, (PrivateMessage.sender == recipient) & (PrivateMessage.recipient == sender) & (PrivateMessage.read == False))
+
+    return render_template('private_chat.html', messages=messages, recipient=recipient)
+
+@app.route('/private_messages')
+def private_messages():
     if 'username' not in session:
         return redirect(url_for('login'))
 
     username = session['username']
 
+    # Get all users except current user
+    all_users = db.all()
+    users = [user for user in all_users if user.get('username') != username]
+
+    # Check for unread messages for each user
+    for user in users:
+        unread_count = private_messages_db.count(
+            (PrivateMessage.sender == user['username']) & 
+            (PrivateMessage.recipient == username) & 
+            (PrivateMessage.read == False)
+        )
+        user['unread_count'] = unread_count
+
+    # Get user's groups
+    my_groups = groups_db.search(Group.members.test(lambda members: username in members))
+    
+    for group in my_groups:
+        unread_count = group_messages_db.count(
+            (GroupMessage.group_id == group.doc_id) & 
+            (GroupMessage.sender != username)
+        )
+        group['unread_count'] = unread_count
+
+    return render_template('private_messages.html', users=users, groups=my_groups)
+
+# GROUP CHAT ROUTES
+
+@app.route('/groups')
+def groups_list():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    
+    # Get all groups user is member of
+    my_groups = groups_db.search(Group.members.test(lambda members: username in members))
+    
+    # Get all available groups user is not member of
+    all_groups = groups_db.all()
+    available_groups = [g for g in all_groups if username not in g.get('members', [])]
+    
+    for group in my_groups:
+        unread_count = group_messages_db.count(
+            (GroupMessage.group_id == group.doc_id) & 
+            (GroupMessage.sender != username)
+        )
+        group['unread_count'] = unread_count
+    
+    return render_template('groups_list.html', my_groups=my_groups, available_groups=available_groups)
+
+@app.route('/create_group', methods=['GET', 'POST'])
+def create_group():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    
     if request.method == 'POST':
-        text = request.form.get('message')
+        group_name = request.form.get('group_name')
+        selected_members = request.form.getlist('members')
+        
+        if not group_name:
+            flash('Group name is required')
+            return redirect(url_for('create_group'))
+        
+        # Check if group name already exists
+        existing_group = groups_db.search(Group.name == group_name)
+        if existing_group:
+            flash('Group name already exists')
+            return redirect(url_for('create_group'))
+        
+        # Add creator to members
+        members = [username] + selected_members
+        members = list(set(members))  # Remove duplicates
+        
+        groups_db.insert({
+            'name': group_name,
+            'creator': username,
+            'members': members,
+            'created_at': datetime.datetime.now().isoformat(),
+            'description': request.form.get('description', '')
+        })
+        
+        flash(f'Group "{group_name}" created successfully!')
+        return redirect(url_for('groups_list'))
+    
+    # Get all users except current user
+    all_users = db.all()
+    users = [user for user in all_users if user.get('username') != username]
+    
+    return render_template('create_group.html', users=users)
 
-        if text:
-            messages_db.insert({
-                'user': username,
-                'text': text
+@app.route('/group_chat/<int:group_id>', methods=['GET', 'POST'])
+def group_chat(group_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    group = groups_db.get(doc_id=group_id)
+    
+    if not group:
+        flash('Group not found')
+        return redirect(url_for('groups_list'))
+    
+    # Check if user is member of group
+    if username not in group.get('members', []):
+        flash('You are not a member of this group')
+        return redirect(url_for('groups_list'))
+    
+    if request.method == 'POST':
+        message_text = request.form.get('message')
+        if message_text:
+            group_messages_db.insert({
+                'group_id': group_id,
+                'sender': username,
+                'text': message_text,
+                'timestamp': datetime.datetime.now().isoformat()
             })
+        return redirect(url_for('group_chat', group_id=group_id))
+    
+    # Get all messages for this group
+    messages = group_messages_db.search(GroupMessage.group_id == group_id)
+    messages = sorted(messages, key=lambda x: x.get('timestamp', ''))
+    
+    # Get member info
+    members = []
+    for member_name in group.get('members', []):
+        member = db.get(Uporabnik.username == member_name)
+        if member:
+            members.append(member)
+    
+    return render_template('group_chat.html', group=group, messages=messages, members=members, group_id=group_id)
 
-        return redirect(url_for('chat_page'))
+@app.route('/add_members/<int:group_id>', methods=['GET', 'POST'])
+def add_members(group_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    group = groups_db.get(doc_id=group_id)
+    
+    if not group:
+        flash('Group not found')
+        return redirect(url_for('groups_list'))
+    
+    # Check if user is creator of group
+    if group['creator'] != username:
+        flash('Only group creator can add members')
+        return redirect(url_for('group_chat', group_id=group_id))
+    
+    if request.method == 'POST':
+        new_members = request.form.getlist('members')
+        current_members = group.get('members', [])
+        
+        for member in new_members:
+            if member not in current_members:
+                current_members.append(member)
+        
+        groups_db.update({'members': current_members}, doc_ids=[group_id])
+        flash('Members added successfully!')
+        return redirect(url_for('group_chat', group_id=group_id))
+    
+    # Get all users except current members
+    all_users = db.all()
+    available_users = [u for u in all_users if u.get('username') not in group.get('members', [])]
+    
+    return render_template('add_members.html', group=group, available_users=available_users, group_id=group_id)
 
-    messages = messages_db.all()
-
-    return render_template('chat.html', messages=messages)
-
-
-
+@app.route('/leave_group/<int:group_id>', methods=['POST'])
+def leave_group(group_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    group = groups_db.get(doc_id=group_id)
+    
+    if not group:
+        flash('Group not found')
+        return redirect(url_for('groups_list'))
+    
+    members = group.get('members', [])
+    if username in members:
+        members.remove(username)
+        
+        # If no members left, delete group
+        if not members:
+            groups_db.remove(doc_ids=[group_id])
+            flash('Group deleted (no members left)')
+        else:
+            groups_db.update({'members': members}, doc_ids=[group_id])
+            flash('You left the group')
+    
+    return redirect(url_for('groups_list'))
     
 
 
@@ -305,4 +538,4 @@ def chat_page():
 
         
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=3000)

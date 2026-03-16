@@ -1,5 +1,49 @@
 # Načrt aplikacije za povezovanje glasbenikov
 
+## 🎵 CHAT SYSTEM - Novo!
+
+### Instagram-Style Private Messaging & Group Chats
+
+Aplikacija ima zdaj polnopravno chat sistem z modernim dizajnom:
+
+#### ✨ Lastnosti:
+1. **Private Messages (Zasebna sporočila)**
+   - Instagram-podobni vmesnik s sidebrom
+   - Prikaz vseh dosedanjih pogovorov
+   - Oznake za neprebranih sporočil
+   - Iskalnica za hitro iskanje kontaktov
+   - Status "Online/Offline" indikator
+
+2. **Group Chats (Skupinski chati)**
+   - Ustvari nove grupe z več uporabniki
+   - Dodaj in odstrani člane iz grupe
+   - Historija skupinskih sporočil
+   - Seznam članov s pravicami (admin/member)
+   - Možnost zapustiti grupo
+
+3. **UI/UX**
+   - Fluidne animacije (fade, slide, bounce efekti)
+   - Responziven dizajn (desktop & mobile)
+   - Filtriranje (Vsa, Neprebrana, Grupe)
+   - Avtomatski scroll na zadnja sporočila
+   - Mod Enter-je za hitro pošiljanje sporočil
+
+#### 🔗 Navigacija:
+- **Home** → **Private Messages** (`/private_messages`)
+  - Izberi uporabnika ali grupo
+  - **Private Chat** (`/private_chat/<username>`) - pogovor s prijateljem
+  - **Groups** (`/groups`) - upravljanje grup
+    - **Create Group** (`/create_group`) - nova grupa
+    - **Group Chat** (`/group_chat/<id>`) - grupni pogovor
+    - **Add Members** (`/add_members/<id>`) - dodaj člane
+
+#### 📊 Podatkovne baze:
+- `private_messages.json` - zasebna sporočila
+- `groups.json` - podatki o grupah
+- `group_messages.json` - sporočila v grupah
+
+---
+
 ## 1. Registracija in uporabniški profili
 - Glasbeniki se registrirajo z informacijami o instrumentu, žanru, izkušnjah, ciljih in lokaciji.
 - Uporabniki lahko urejajo svoj profil z dodatnimi podatki (povezave do glasbenih projektov, kratek opis).

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groups</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: #121212;
+            color: #ffffff;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 80px auto 20px;
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+
+        .create-group-btn {
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .create-group-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #222222;
+            padding-bottom: 8px;
+        }
+
+        .tab {
+            padding: 8px 0;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #888888;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            position: relative;
+        }
+
+        .tab.active {
+            color: #2ecc71;
+            border-bottom-color: #2ecc71;
+        }
+
+        .tab:hover {
+            color: #aaaaaa;
+        }
+
+        .groups-section {
+            display: none;
+        }
+
+        .groups-section.active {
+            display: block;
+        }
+
+        .group-card {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: #ffffff;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            animation: slideUp 0.4s ease-out backwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .group-card:hover {
+            box-shadow: 0 4px 12px rgba(46,204,113,0.2);
+            transform: translateY(-2px);
+        }
+
+        .group-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2ecc71, #58d68d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #121212;
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .group-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .group-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #2ecc71;
+        }
+
+        .group-details {
+            font-size: 13px;
+            color: #888888;
+        }
+
+        .group-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #222222;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #2ecc71;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: #333333;
+            transform: scale(1.05);
+        }
+
+        .action-btn.delete {
+            color: #f5576c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #888888;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            opacity: 0.3;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .empty-state p {
+            margin-bottom: 16px;
+        }
+
+        .empty-state a {
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: #121212;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .empty-state a:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+        }
+
+        .group-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .group-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .group-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .group-card:nth-child(n+4) {
+            animation-delay: 0.4s;
+        }
+    </style>
+</head>
+<body>
+    <a href="{{ url_for('private_messages') }}" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+
+    <div class="container">
+        <div class="header">
+            <h1>Groups</h1>
+            <a href="{{ url_for('create_group') }}" class="create-group-btn">
+                <i class="fas fa-plus"></i> New Group
+            </a>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="my-groups">My Groups</button>
+            <button class="tab" data-tab="available-groups">Available</button>
+        </div>
+
+        <!-- MY GROUPS -->
+        <div class="groups-section active" id="my-groups">
+            {% if my_groups %}
+                {% for group in my_groups %}
+                    <a href="{{ url_for('group_chat', group_id=group.doc_id) }}" class="group-card">
+                        <div class="group-avatar">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="group-info">
+                            <div class="group-name">{{ group.name }}</div>
+                            <div class="group-details">
+                                {{ group.members|length }} members
+                                {% if group.get('description') %}
+                                    • {{ group.description[:30] }}...
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="group-actions">
+                            <form method="POST" action="{{ url_for('leave_group', group_id=group.doc_id) }}" style="display: inline;" onclick="return confirm('Leave this group?');">
+                                <button type="submit" class="action-btn delete" title="Leave group">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </a>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>You haven't joined any groups yet</p>
+                    <a href="{{ url_for('create_group') }}">Create Your First Group</a>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- AVAILABLE GROUPS -->
+        <div class="groups-section" id="available-groups">
+            {% if available_groups %}
+                {% for group in available_groups %}
+                    <div class="group-card">
+                        <div class="group-avatar">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="group-info">
+                            <div class="group-name">{{ group.name }}</div>
+                            <div class="group-details">
+                                {{ group.members|length }} members • Created by {{ group.creator }}
+                            </div>
+                        </div>
+                        <div class="group-actions">
+                            <form method="POST" action="{{ url_for('add_members', group_id=group.doc_id) }}" style="display: inline;">
+                                <button type="submit" class="action-btn" title="Join group">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <p>No available groups to join</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.groups-section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active from all tabs and sections
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+
+                // Add active to clicked tab and corresponding section
+                tab.classList.add('active');
+                const sectionId = tab.dataset.tab;
+                document.getElementById(sectionId).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
