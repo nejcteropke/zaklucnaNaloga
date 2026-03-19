@@ -407,12 +407,93 @@
             font-weight: 700;
             margin-left: 8px;
         }
+        .side-menu {
+    position: fixed;
+    top: 0;
+    left: -260px;
+    width: 260px;
+    height: 100%;
+    background: #121212;
+    border-right: 1px solid #222;
+    padding: 20px;
+    transition: 0.3s;
+    z-index: 2000;
+}
+
+.side-menu.active {
+    left: 0;
+}
+
+.menu-title {
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: 0.2s;
+}
+
+.menu-item:hover {
+    background: #1a1a1a;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1500;
+}
+
+.menu-overlay.active {
+    display: block;
+}
     </style>
 </head>
 <body>
-    <a href="{{ url_for('home') }}" class="home-button">
-        <i class="fas fa-home"></i> Home
-    </a>
+    <div class="side-menu" id="sideMenu">
+    <h3 class="menu-title">Navigation</h3>
+    <div class="menu-items">
+        <a href="{{ url_for('home') }}" class="menu-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="{{ url_for('find_people') }}" class="menu-item">
+            <i class="fas fa-users"></i>
+            <span>Find people</span>
+        </a>
+        <a href="{{ url_for('chat_page') }}" class="menu-item">
+            <i class="fas fa-comments"></i>
+            <span>Chat</span>
+        </a>
+        <a href="#" class="menu-item">
+            <i class="fas fa-music"></i>
+            <span>Jam sessions</span>
+        </a>
+        <a href="{{ url_for('calendar') }}" class="menu-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Events</span>
+        </a>
+    </div>
+</div>
+
+<div class="menu-overlay" id="menuOverlay"></div>
 
     <div class="messages-wrapper">
         <!-- SIDEBAR -->
@@ -444,7 +525,10 @@
                     <!-- PRIVATE CHATS -->
                     <div class="users-section" id="usersSection">
                         {% for user in users %}
-                            <a href="{{ url_for('private_chat', recipient=user.username) }}" class="chat-item {% if user.unread_count > 0 %}unread{% endif %}" data-type="user">
+                            <a href="{{ url_for('private_chat', recipient=user.username) }}" 
+                                class="chat-item {% if user.unread_count > 0 %}unread{% endif %}" 
+                                data-type="user"
+                                data-chat-url="{{ url_for('private_chat', recipient=user.username) }}">
                                 <div class="chat-preview">
                                     <div class="user-avatar online">
                                         {{ user.username[0].upper() }}
@@ -464,7 +548,10 @@
                     <!-- GROUPS -->
                     <div class="groups-section" id="groupsSection" style="display: none;">
                         {% for group in groups %}
-                            <a href="{{ url_for('group_chat', group_id=group.doc_id) }}" class="chat-item {% if group.unread_count > 0 %}unread{% endif %}" data-type="group">
+                            <a href="{{ url_for('group_chat', group_id=group.doc_id) }}" 
+                                class="chat-item {% if group.unread_count > 0 %}unread{% endif %}" 
+                                data-type="group"
+                                data-chat-url="{{ url_for('group_chat', group_id=group.doc_id) }}">
                                 <div class="chat-preview">
                                     <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
                                         <i class="fas fa-users" style="font-size: 24px;"></i>
@@ -500,6 +587,24 @@
     </div>
 
     <script>
+        const chatArea = document.querySelector('.chat-area');
+
+document.querySelectorAll('.chat-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const url = item.dataset.chatUrl;
+
+        fetch(url)
+            .then(res => res.text())
+            .then(html => {
+                chatArea.innerHTML = html;
+            })
+            .catch(err => {
+                chatArea.innerHTML = "<p style='padding:20px'>Error loading chat</p>";
+            });
+    });
+});
         const searchInput = document.getElementById('searchInput');
         const tabs = document.querySelectorAll('.tab');
         const usersSection = document.getElementById('usersSection');

@@ -529,3 +529,76 @@ body {
     font-size: 2.5em;
     text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }*/
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+    body {
+        display: block;
+        min-height: 100vh;
+        padding: 0 10px;
+        text-align: left;
+    }
+
+    .center-container {
+        width: 100%;
+        margin-top: 30px;
+        align-items: center;
+    }
+
+    .animated-title {
+        font-size: 2.4em;
+        padding: 10px;
+    }
+
+    .button-container {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .btn {
+        width: 100%;
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .login-container, .setup-profile-form {
+        width: calc(100% - 20px);
+        margin: 20px auto;
+        padding: 18px;
+    }
+
+    .header-buttons {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .profile-header-wrapper {
+        position: static;
+        margin-top: 10px;
+        right: auto;
+        text-align: center;
+    }
+
+    .profile-btn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3em;
+    }
+
+    .profile-card h2 {
+        font-size: 1.6em;
+    }
+
+    .profile-card p {
+        font-size: 1em;
+    }
+
+    .glow {
+        width: 180px;
+        height: 180px;
+    }
+}
