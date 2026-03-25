@@ -195,19 +195,40 @@ def view_account(username):
 def find_people():
     vnos = ""
     results = []
-    
-    users=db.all()
+    users = db.all()
+    instrument = ""
+    location = ""
+    genre = ""
+    experience = ""
     if request.method == 'POST':
         vnos = request.form.get('vnos', '').strip()
-        if vnos: 
-            results = db.search((Uporabnik.username.test(lambda value: vnos.lower() in (value or "").lower())) |
-                                (Uporabnik.name.test(lambda value: vnos.lower() in (value or "").lower())) |
-                                (Uporabnik.surname.test(lambda value: vnos.lower() in (value or "").lower())) |
-                                (Uporabnik.instrument.test(lambda value: vnos.lower() in (value or "").lower()))) 
-        else:
-            results = []
+        instrument = request.form.get('instrument', '').strip()
+        location = request.form.get('location', '').strip()
+        genre = request.form.get('genre', '').strip()
+        experience = request.form.get('experience', '').strip()
 
-    return render_template('find_people.html', results=results, users=users, vnos=vnos)
+        def user_matches(user):
+            if vnos:
+                v = vnos.lower()
+                if not (
+                    v in (user.get('username','') or '').lower() or
+                    v in (user.get('name','') or '').lower() or
+                    v in (user.get('surname','') or '').lower()
+                ):
+                    return False
+            if instrument and (user.get('instrument','') != instrument):
+                return False
+            if location and (location.lower() not in (user.get('location','') or '').lower()):
+                return False
+            if genre and (user.get('genre','') != genre):
+                return False
+            if experience and (user.get('experience','') != experience):
+                return False
+            return True
+
+        results = [u for u in users if user_matches(u)]
+
+    return render_template('find_people.html', results=results, users=users, vnos=vnos, instrument=instrument, location=location, genre=genre, experience=experience)
 
 @app.route('/generate_username', methods=['GET'])
 def generate_username():

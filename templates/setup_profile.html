@@ -461,6 +461,7 @@
             <div class="form-group">
                 <label for="location">Location:</label>
                 <input type="text" id="location" name="location" required>
+                <button type="button" id="detectLocationBtn" style="margin-top:8px;">Detect Location Automatically</button>
             </div>
 
             <div class="form-group">
@@ -488,6 +489,19 @@
     </main>
 
     <script>
+                // Detect location by IP and fill the input
+                document.getElementById('detectLocationBtn').onclick = function() {
+                    fetch('https://ipapi.co/json/')
+                        .then(response => response.json())
+                        .then(data => {
+                            let loc = '';
+                            if (data.country_name) loc += data.country_name;
+                            if (data.region) loc += ', ' + data.region;
+                            if (data.city) loc += ', ' + data.city;
+                            document.getElementById('location').value = loc;
+                        })
+                        .catch(() => alert('Could not detect location.'));
+                };
         // Random positioning and animation for music notes
         document.querySelectorAll('.note').forEach(note => {
             // Set random delay and duration for each note

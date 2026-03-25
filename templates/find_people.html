@@ -1,3 +1,9 @@
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            position: relative;
+        }
 <!DOCTYPE html>
 <html lang="sl">
 <head>
@@ -336,18 +342,52 @@
 
         .search-form input {
             flex-grow: 1;
-            padding: 15px;
-            border-radius: 8px 0 0 8px;
-            border: none;
-            background-color: #2a2a2a;
-            color: white;
+            padding: 13px 15px;
+            border-radius: 8px;
+            border: 1.5px solid #2ecc71;
+            background-color: #181f18;
+            color: #fff;
             font-size: 1rem;
             transition: all 0.3s ease;
+            margin-right: 6px;
+            box-shadow: 0 2px 8px rgba(46,204,113,0.08);
+            outline: none;
+            font-weight: 500;
+            letter-spacing: 0.02em;
         }
         
         .search-form input:focus {
-            background-color: #333;
+            background-color: #232f23;
+            border-color: #58d68d;
+        }
+
+        .search-form select {
+            padding: 13px 15px;
+            border-radius: 8px;
+            border: 1.5px solid #2ecc71;
+            background-color: #181f18;
+            color: #fff;
+            font-size: 1rem;
+            margin-right: 6px;
+            box-shadow: 0 2px 8px rgba(46,204,113,0.08);
             outline: none;
+            transition: all 0.3s;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg fill='%232ecc71' height='18' viewBox='0 0 24 24' width='18' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position-x: calc(100% - 12px);
+            background-position-y: 50%;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+        .search-form select:focus {
+            border-color: #58d68d;
+            background-color: #232f23;
+        }
+        .search-form option {
+            background: #232;
+            color: #fff;
         }
 
         .search-form button {
@@ -355,13 +395,14 @@
             background: linear-gradient(45deg, #2ecc71, #58d68d);
             color: white;
             border: none;
-            border-radius: 0 8px 8px 0;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             font-weight: bold;
             font-size: 1rem;
             position: relative;
             overflow: hidden;
+            margin-left: 6px;
         }
 
         .search-form button:hover {
@@ -392,7 +433,7 @@
     
         /* Glavni del */
         main {
-            margin-top: 140px; /* Povečan prostor za header in search */
+            margin-top: 180px; /* Še več prostora za header in search */
             padding: 40px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -437,22 +478,6 @@
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(46, 204, 113, 0.2);
             border-color: rgba(46, 204, 113, 0.3);
-        }
-        
-        main li::before {
-            content: '';
-            position: absolute;
-            top: -100%;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, transparent, rgba(46, 204, 113, 0.1), transparent);
-            transition: all 0.6s ease;
-        }
-        
-        main li:hover::before {
-            top: 100%;
-            left: 100%;
         }
     
         main li strong {
@@ -520,31 +545,125 @@
         /* Dodaten stil za rezultate iskanja */
         .search-results {
             grid-column: 1 / -1;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: rgba(40, 40, 40, 0.3);
-            border-radius: 12px;
-            border-left: 4px solid #2ecc71;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 36px;
+            padding: 32px 28px 24px 28px;
+            background: linear-gradient(135deg, #181f18 0%, #232 100%);
+            border-radius: 22px;
+            border-left: 6px solid #2ecc71;
+            box-shadow: 0 8px 32px rgba(46, 204, 113, 0.13), 0 2px 12px rgba(0,0,0,0.18);
             animation: fadeIn 0.8s ease;
+            position: relative;
+            overflow: visible;
         }
 
         .search-results h2 {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             color: #2ecc71;
-            font-size: 1.8rem;
+            font-size: 2.1rem;
             position: relative;
             display: inline-block;
+            letter-spacing: 0.02em;
+            font-weight: 700;
         }
         
         .search-results h2::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -7px;
             left: 0;
-            width: 50%;
-            height: 2px;
+            width: 60%;
+            height: 3px;
             background: linear-gradient(90deg, #2ecc71, transparent);
+        }
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 10px;
+            margin-bottom: 0;
+            padding: 0;
+            list-style: none;
+            justify-content: flex-start;
+        }
+            background: linear-gradient(135deg, #232 0%, #1a1a1a 100%);
+            border: 1.5px solid #2ecc71;
+            border-radius: 18px;
+            box-shadow: 0 4px 18px rgba(46,204,113,0.10), 0 1.5px 6px rgba(0,0,0,0.13);
+            padding: 22px 20px 18px 20px;
+            width: 280px;
+            min-width: 220px;
+            max-width: 320px;
+            flex: 0 0 auto;
+            margin: 0;
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+            position: relative;
+            color: #f2f2f2;
+        }
+        .search-results ul li:hover {
+            box-shadow: 0 8px 32px rgba(46,204,113,0.18), 0 2px 12px rgba(0,0,0,0.22);
+            border-color: #58d68d;
+            transform: translateY(-4px) scale(1.03);
+        }
+        .search-results ul li strong {
+            color: #2ecc71;
+            font-size: 1.08rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            display: inline-block;
+        }
+        .search-results .user-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+        .search-results .user-avatar {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            border: 2px solid #2ecc71;
+            object-fit: cover;
+            background: #232;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #2ecc71;
+            box-shadow: 0 2px 8px #111;
+        }
+        .search-results .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .search-results .user-name {
+            font-size: 1.18rem;
+            font-weight: 700;
+            color: #2ecc71;
+            letter-spacing: 0.01em;
+            margin-bottom: 1px;
+        }
+        .search-results .user-username {
+            font-size: 1rem;
+            color: #fff;
+            opacity: 0.85;
+        }
+        .search-results .user-details {
+            display: flex;
+            gap: 12px;
+            margin-top: 2px;
+            font-size: 0.98rem;
+            color: #ccc;
+        }
+        .search-results .user-details i {
+            color: #2ecc71;
+            margin-right: 3px;
+        }
+        }
+        .search-results ul li a.account-link {
+            margin-top: 12px;
+            display: inline-block;
         }
 
         .no-results {
@@ -692,8 +811,35 @@
         
         <!-- Iskalni obrazec -->
         <div class="search-container">
-            <form action="{{ url_for('find_people') }}" method="post" class="search-form" id="searchForm">
-                <input type="text" name="vnos" placeholder="Search" value="{{ vnos }}" required>
+            <form action="{{ url_for('find_people') }}" method="post" class="search-form" id="searchForm" style="flex-wrap:wrap;gap:10px;align-items:center;">
+                <input type="text" name="vnos" placeholder="Ime, uporabniško ime..." value="{{ vnos }}" style="min-width:160px;max-width:200px;">
+                <select name="instrument" style="min-width:120px;">
+                    <option value="">Instrument</option>
+                    <option value="Guitar">Guitar</option>
+                    <option value="Drums">Drums</option>
+                    <option value="Bass">Bass</option>
+                    <option value="Vocals">Vocals</option>
+                    <option value="Keyboards">Keyboards</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input type="text" name="location" placeholder="Lokacija" style="min-width:120px;max-width:160px;">
+                <select name="genre" style="min-width:120px;">
+                    <option value="">Žanr</option>
+                    <option value="Rock">Rock</option>
+                    <option value="Pop">Pop</option>
+                    <option value="Jazz">Jazz</option>
+                    <option value="Classical">Classical</option>
+                    <option value="Metal">Metal</option>
+                    <option value="Blues">Blues</option>
+                    <option value="Other">Other</option>
+                </select>
+                <select name="experience" style="min-width:120px;">
+                    <option value="">Izkušnje</option>
+                    <option value="Beginner">Beginner</option>
+                    <option value="Intermediate">Intermediate</option>
+                    <option value="Advanced">Advanced</option>
+                    <option value="Professional">Professional</option>
+                </select>
                 <button type="submit">Search</button>
             </form>
         </div>
@@ -707,9 +853,25 @@
                 <ul>
                     {% for user in results %}
                         <li>
-                            <strong>Username:</strong> {{ user.username }}<br>
-                            <strong>Name:</strong> {{ user.name }} {{ user.surname }}<br>
-                            <strong>Instrument:</strong> {{ user.instrument }}<br>
+                            <div class="user-header">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture }}" alt="avatar" class="user-avatar">
+                                {% else %}
+                                    <div class="user-avatar"><i class="fas fa-user"></i></div>
+                                {% endif %}
+                                <div class="user-info">
+                                    <div class="user-name">{{ user.name }} {{ user.surname }}</div>
+                                    <div class="user-username"><i class="fas fa-at"></i> {{ user.username }}</div>
+                                </div>
+                            </div>
+                            <div class="user-details">
+                                {% if user.instrument %}
+                                    <span><i class="fas fa-guitar"></i> {{ user.instrument }}</span>
+                                {% endif %}
+                                {% if user.location %}
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ user.location }}</span>
+                                {% endif %}
+                            </div>
                             <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">View Account</a>
                         </li>
                     {% endfor %}
@@ -724,19 +886,41 @@
         <!-- Seznam vseh uporabnikov -->
         <ul>
             {% for user in users %}
-                <li>
-                    <strong>Username:</strong> {{ user.username or "Unavailable" }}<br>
-                    {% if user.name and user.surname %}
-                        <strong>Name:</strong> {{ user.name }} {{ user.surname }}<br>
-                    {% endif %}
-                    {% if user.instrument %}
-                        <strong>Instrument:</strong> {{ user.instrument }}<br>
-                    {% endif %}
-                    {% if user.username %}
-                        <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">View Account</a>
-                    {% else %}
-                        <span class="no-account">Profile not available</span>
-                    {% endif %}
+                <li style="padding:0;overflow:visible;">
+                    <div style="display:flex;align-items:center;gap:18px;padding:22px 18px;">
+                        <div style="flex-shrink:0;">
+                            {% if user.profile_picture %}
+                                <img src="{{ user.profile_picture }}" alt="avatar" style="width:64px;height:64px;border-radius:50%;border:2px solid #2ecc71;object-fit:cover;box-shadow:0 2px 8px #111;">
+                            {% else %}
+                                <div style="width:64px;height:64px;border-radius:50%;background:#232;border:2px solid #2ecc71;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#2ecc71;box-shadow:0 2px 8px #111;">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="font-size:1.2rem;font-weight:600;color:#2ecc71;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                {{ user.name }} {{ user.surname }}
+                            </div>
+                            <div style="font-size:1rem;color:#fff;opacity:0.85;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                <i class="fas fa-at" style="color:#58d68d;"></i> {{ user.username or "Unavailable" }}
+                            </div>
+                            <div style="margin-top:4px;font-size:0.98rem;color:#ccc;display:flex;align-items:center;gap:10px;">
+                                {% if user.instrument %}
+                                    <span><i class="fas fa-guitar" style="color:#2ecc71;"></i> {{ user.instrument }}</span>
+                                {% endif %}
+                                {% if user.location %}
+                                    <span><i class="fas fa-map-marker-alt" style="color:#2ecc71;"></i> {{ user.location }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div style="margin-left:auto;">
+                            {% if user.username %}
+                                <a href="{{ url_for('view_account', username=user.username) }}" class="account-link" style="margin:0;">View</a>
+                            {% else %}
+                                <span class="no-account">Profile not available</span>
+                            {% endif %}
+                        </div>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
