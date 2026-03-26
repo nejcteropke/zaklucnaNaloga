@@ -85,7 +85,7 @@ h1{margin:0;}
             <div class="profile-info">
                 <div class="info-item"><div class="info-label">Instrument</div><div class="info-value">{{ user.instrument }}</div></div>
                 <div class="info-item"><div class="info-label">Genre</div><div class="info-value">{{ user.genre }}</div></div>
-                <div class="info-item"><div class="info-label">Location</div><div class="info-value">{{ user.location }}</div></div>
+                <div class="info-item"><div class="info-label">Location</div><div class="info-value">{{ user.location }}{% if distance_km is not none %} &nbsp;<span style="color:#2ecc71;font-size:0.9em;">({{ distance_km }} km od tebe)</span>{% endif %}</div></div>
             </div>
         </div>
         <div class="profile-section">

@@ -869,7 +869,7 @@
                                     <span><i class="fas fa-guitar"></i> {{ user.instrument }}</span>
                                 {% endif %}
                                 {% if user.location %}
-                                    <span><i class="fas fa-map-marker-alt"></i> {{ user.location }}</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> {{ user.location }}{% if distances.get(user.username) is not none %} <span style="color:#2ecc71;font-size:0.85em;">({{ distances[user.username] }} km)</span>{% endif %}</span>
                                 {% endif %}
                             </div>
                             <a href="{{ url_for('view_account', username=user.username) }}" class="account-link">View Account</a>
@@ -909,7 +909,7 @@
                                     <span><i class="fas fa-guitar" style="color:#2ecc71;"></i> {{ user.instrument }}</span>
                                 {% endif %}
                                 {% if user.location %}
-                                    <span><i class="fas fa-map-marker-alt" style="color:#2ecc71;"></i> {{ user.location }}</span>
+                                    <span><i class="fas fa-map-marker-alt" style="color:#2ecc71;"></i> {{ user.location }}{% if distances.get(user.username) is not none %} <span style="color:#2ecc71;font-size:0.85em;">({{ distances[user.username] }} km)</span>{% endif %}</span>
                                 {% endif %}
                             </div>
                         </div>

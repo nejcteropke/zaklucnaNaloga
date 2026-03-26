@@ -3,6 +3,7 @@ from tinydb import TinyDB, Query
 import bcrypt, re
 import requests
 import datetime
+import math
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -179,6 +180,34 @@ def edit_profile():
         return redirect(url_for('profile'))
     return render_template('edit_profile.html', user=user)
 
+def geocode(location):
+    """Vrne (lat, lon) za dano lokacijo ali None."""
+    if not location:
+        return None
+    try:
+        resp = requests.get(
+            'https://nominatim.openstreetmap.org/search',
+            params={'q': location, 'format': 'json', 'limit': 1},
+            headers={'User-Agent': 'GlasbenikiConnect/1.0'},
+            timeout=5
+        )
+        data = resp.json()
+        if data:
+            return float(data[0]['lat']), float(data[0]['lon'])
+    except Exception:
+        pass
+    return None
+
+def haversine_km(coord1, coord2):
+    """Razdalja v km med dvema (lat, lon) koordinatama."""
+    R = 6371
+    lat1, lon1 = math.radians(coord1[0]), math.radians(coord1[1])
+    lat2, lon2 = math.radians(coord2[0]), math.radians(coord2[1])
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    return R * 2 * math.asin(math.sqrt(a))
+
 #pogledas profil
 @app.route('/account/<username>')
 def view_account(username):
@@ -186,7 +215,15 @@ def view_account(username):
     if not user:
         return redirect(url_for('home'))
     user_events = events_db.search(Event.username == username)
-    return render_template('account.html', user=user, events=user_events)
+    distance_km = None
+    if 'username' in session and session['username'] != username:
+        current_user = db.get(Uporabnik.username == session['username'])
+        if current_user and current_user.get('location') and user.get('location'):
+            coord_me = geocode(current_user['location'])
+            coord_them = geocode(user['location'])
+            if coord_me and coord_them:
+                distance_km = round(haversine_km(coord_me, coord_them))
+    return render_template('account.html', user=user, events=user_events, distance_km=distance_km)
 
 
         
@@ -228,7 +265,20 @@ def find_people():
 
         results = [u for u in users if user_matches(u)]
 
-    return render_template('find_people.html', results=results, users=users, vnos=vnos, instrument=instrument, location=location, genre=genre, experience=experience)
+    # Izračunaj razdalje do vseh uporabnikov
+    distances = {}
+    if 'username' in session:
+        current_user = db.get(Uporabnik.username == session['username'])
+        if current_user and current_user.get('location'):
+            coord_me = geocode(current_user['location'])
+            if coord_me:
+                for u in users:
+                    if u.get('username') != session['username'] and u.get('location'):
+                        coord_them = geocode(u['location'])
+                        if coord_them:
+                            distances[u['username']] = round(haversine_km(coord_me, coord_them))
+
+    return render_template('find_people.html', results=results, users=users, vnos=vnos, instrument=instrument, location=location, genre=genre, experience=experience, distances=distances)
 
 @app.route('/generate_username', methods=['GET'])
 def generate_username():
