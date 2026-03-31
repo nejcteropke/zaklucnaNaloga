@@ -407,63 +407,116 @@
             font-weight: 700;
             margin-left: 8px;
         }
+
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 2100;
+            border: 1px solid rgba(46, 204, 113, 0.45);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+            transition: all 0.25s ease;
+        }
+
+        .menu-toggle:hover {
+            background: linear-gradient(135deg, #1c1c1c 0%, #262626 100%);
+            transform: scale(1.06);
+            color: #2ecc71;
+            box-shadow: 0 8px 22px rgba(46, 204, 113, 0.25);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                top: 14px;
+                left: 14px;
+            }
+        }
+
         .side-menu {
-    position: fixed;
-    top: 0;
-    left: -260px;
-    width: 260px;
-    height: 100%;
-    background: #121212;
-    border-right: 1px solid #222;
-    padding: 20px;
-    transition: 0.3s;
-    z-index: 2000;
-}
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(16, 16, 16, 0.95);
+            border-right: 1px solid #2a2a2a;
+            backdrop-filter: blur(8px);
+            padding: 96px 16px 20px;
+            transition: left 0.35s ease;
+            z-index: 2000;
+            box-shadow: 8px 0 24px rgba(0, 0, 0, 0.45);
+        }
 
-.side-menu.active {
-    left: 0;
-}
+        .side-menu.active {
+            left: 0;
+        }
 
-.menu-title {
-    color: #2ecc71;
-    margin-bottom: 20px;
-}
+        .menu-title {
+            color: #2ecc71;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            letter-spacing: 0.4px;
+            padding-left: 10px;
+            border-left: 3px solid #2ecc71;
+        }
 
-.menu-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-.menu-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    color: white;
-    text-decoration: none;
-    transition: 0.2s;
-}
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 12px;
+            border-radius: 10px;
+            color: #f5f5f5;
+            text-decoration: none;
+            background: rgba(35, 35, 35, 0.55);
+            border: 1px solid transparent;
+            transition: all 0.22s ease;
+        }
 
-.menu-item:hover {
-    background: #1a1a1a;
-}
+        .menu-item i {
+            color: #2ecc71;
+            width: 20px;
+            text-align: center;
+        }
 
-.menu-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    z-index: 1500;
-}
+        .menu-item:hover {
+            background: rgba(46, 204, 113, 0.14);
+            border-color: rgba(46, 204, 113, 0.35);
+            transform: translateX(4px);
+        }
 
-.menu-overlay.active {
-    display: block;
-}
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1500;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
     </style>
 </head>
 <body>
@@ -478,11 +531,7 @@
             <i class="fas fa-users"></i>
             <span>Find people</span>
         </a>
-        <a href="{{ url_for('chat_page') }}" class="menu-item">
-            <i class="fas fa-comments"></i>
-            <span>Chat</span>
-        </a>
-        <a href="#" class="menu-item">
+        <a href="{{ url_for('jam_sessions') }}" class="menu-item">
             <i class="fas fa-music"></i>
             <span>Jam sessions</span>
         </a>
@@ -490,10 +539,18 @@
             <i class="fas fa-calendar-alt"></i>
             <span>Events</span>
         </a>
+        <a href="{{ url_for('chat_page') }}" class="menu-item">
+            <i class="fas fa-comments"></i>
+            <span>Chat</span>
+        </a>
     </div>
 </div>
 
 <div class="menu-overlay" id="menuOverlay"></div>
+
+    <button class="menu-toggle" id="menuToggle" title="Meni">
+        <i class="fas fa-bars"></i>
+    </button>
 
     <div class="messages-wrapper">
         <!-- SIDEBAR -->
@@ -525,17 +582,17 @@
                     <!-- PRIVATE CHATS -->
                     <div class="users-section" id="usersSection">
                         {% for user in users %}
-                            <a href="{{ url_for('private_chat', recipient=user.username) }}" 
+                            <a href="{{ url_for('private_chat', recipient=user.username, next=url_for('private_messages')) }}" 
                                 class="chat-item {% if user.unread_count > 0 %}unread{% endif %}" 
                                 data-type="user"
-                                data-chat-url="{{ url_for('private_chat', recipient=user.username) }}">
+                                data-chat-url="{{ url_for('private_chat', recipient=user.username, next=url_for('private_messages')) }}">
                                 <div class="chat-preview">
                                     <div class="user-avatar online">
                                         {{ user.username[0].upper() }}
                                     </div>
                                     <div class="chat-info">
                                         <div class="chat-name">{{ user.username }}</div>
-                                        <div class="chat-preview-text">{{ user.get('name', 'Click to chat') }}</div>
+                                        <div class="chat-preview-text">{{ user.last_message_text or user.get('name', 'Click to chat') }}</div>
                                     </div>
                                     {% if user.unread_count > 0 %}
                                         <div class="unread-badge">{{ user.unread_count }}</div>
@@ -548,10 +605,10 @@
                     <!-- GROUPS -->
                     <div class="groups-section" id="groupsSection" style="display: none;">
                         {% for group in groups %}
-                            <a href="{{ url_for('group_chat', group_id=group.doc_id) }}" 
+                            <a href="{{ url_for('group_chat', group_id=group.doc_id, next=url_for('private_messages')) }}" 
                                 class="chat-item {% if group.unread_count > 0 %}unread{% endif %}" 
                                 data-type="group"
-                                data-chat-url="{{ url_for('group_chat', group_id=group.doc_id) }}">
+                                data-chat-url="{{ url_for('group_chat', group_id=group.doc_id, next=url_for('private_messages')) }}">
                                 <div class="chat-preview">
                                     <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
                                         <i class="fas fa-users" style="font-size: 24px;"></i>
@@ -570,7 +627,7 @@
                 {% else %}
                     <div class="no-chats">
                         <i class="fas fa-envelope"></i>
-                        <p>No messages yet. Start a conversation!</p>
+                        <p>No messages yet. Open a profile in Find people and click Chat.</p>
                     </div>
                 {% endif %}
             </div>
@@ -587,24 +644,10 @@
     </div>
 
     <script>
-        const chatArea = document.querySelector('.chat-area');
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
 
-document.querySelectorAll('.chat-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        const url = item.dataset.chatUrl;
-
-        fetch(url)
-            .then(res => res.text())
-            .then(html => {
-                chatArea.innerHTML = html;
-            })
-            .catch(err => {
-                chatArea.innerHTML = "<p style='padding:20px'>Error loading chat</p>";
-            });
-    });
-});
         const searchInput = document.getElementById('searchInput');
         const tabs = document.querySelectorAll('.tab');
         const usersSection = document.getElementById('usersSection');
@@ -649,6 +692,17 @@ document.querySelectorAll('.chat-item').forEach(item => {
         window.addEventListener('load', () => {
             const chatList = document.querySelector('.chat-list');
             chatList.scrollTop = 0;
+        });
+
+        // Side menu toggle
+        menuToggle.addEventListener('click', () => {
+            sideMenu.classList.toggle('active');
+            menuOverlay.classList.toggle('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            sideMenu.classList.remove('active');
+            menuOverlay.classList.remove('active');
         });
     </script>
 </body>

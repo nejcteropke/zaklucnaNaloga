@@ -327,6 +327,7 @@
         .day-divider::after {
             right: 0;
         }
+
     </style>
 </head>
 <body>
@@ -334,7 +335,7 @@
         <!-- HEADER -->
         <div class="chat-header">
             <div class="header-left">
-                <a href="{{ url_for('private_messages') }}" class="back-btn">
+                <a href="{{ back_url }}" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div class="recipient-info">
@@ -343,15 +344,6 @@
                 </div>
             </div>
             <div class="header-icons">
-                <button class="header-icon" title="Call">
-                    <i class="fas fa-phone"></i>
-                </button>
-                <button class="header-icon" title="Video call">
-                    <i class="fas fa-video"></i>
-                </button>
-                <button class="header-icon" title="Info">
-                    <i class="fas fa-info-circle"></i>
-                </button>
             </div>
         </div>
 
@@ -371,6 +363,7 @@
 
         <!-- MESSAGE FORM -->
         <form class="message-form" method="POST" id="messageForm">
+            <input type="hidden" name="next" value="{{ back_url }}">
             <div class="input-wrapper">
                 <button type="button" class="extra-btn">
                     <i class="fas fa-plus"></i>
@@ -419,6 +412,7 @@
 
         // Focus input on load
         messageInput.focus();
+
     </script>
 </body>
 </html>

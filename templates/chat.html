@@ -2,102 +2,357 @@
 <html lang="sl">
 <head>
 <meta charset="UTF-8">
-<title>Chat</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat | BANDMADE</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <style>
-
-body{
-    background:#111;
-    color:white;
-    font-family:Arial;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.chat-container{
-    width:600px;
-    margin:auto;
+body {
+    background: linear-gradient(135deg, #0d0d0d 0%, #121212 100%);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
 }
 
-.messages{
-    height:400px;
-    overflow-y:auto;
-    border:1px solid #444;
-    padding:10px;
-    margin-bottom:20px;
+/* Header */
+header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(17, 17, 17, 0.95);
+    border-bottom: 2px solid #2ecc71;
+    padding: 20px 0;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
-.message{
-    margin-bottom:10px;
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-align: center;
+    color: #2ecc71;
 }
 
-.message b{
-    color:#2ecc71;
+/* Menu Toggle Button */
+.menu-toggle {
+    font-size: 1.8rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    left: 10px;
+    top: 15px;
+    z-index: 1000;
+    border-radius: 50%;
+    background: rgba(40, 40, 40, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
 }
 
-form{
-    display:flex;
+.menu-toggle:hover {
+    background: rgba(60, 60, 60, 0.9);
 }
 
-input{
-    flex:1;
-    padding:10px;
-    border:none;
+.menu-toggle .dots {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-button{
-    padding:10px 20px;
-    background:#2ecc71;
-    border:none;
-    color:white;
+.menu-toggle .dot {
+    width: 6px;
+    height: 6px;
+    background-color: white;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-.back-btn{
-    display:inline-block;
-    margin:20px;
-    padding:10px 20px;
-    background:#2ecc71;
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    font-weight:bold;
+.menu-toggle:hover .dot {
+    background-color: #2ecc71;
 }
 
-.back-btn:hover{
-    background:#27ae60;
+/* Sliding Menu */
+.side-menu {
+    position: fixed;
+    left: -350px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: rgba(15, 15, 15, 0.95);
+    z-index: 999;
+    padding: 100px 20px 40px;
+    transition: all 0.4s ease;
+    box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+    border-right: 1px solid #222;
 }
 
+.side-menu.open {
+    left: 0;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item {
+    padding: 14px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    background: rgba(40, 40, 40, 0.4);
+}
+
+.menu-item:hover {
+    background: rgba(46, 204, 113, 0.15);
+    transform: translateX(5px);
+}
+
+.menu-item i {
+    font-size: 1.2rem;
+    width: 24px;
+    color: #2ecc71;
+}
+
+.menu-title {
+    font-size: 1.2rem;
+    color: #999;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 3px solid #2ecc71;
+}
+
+main {
+    margin-top: 100px;
+    padding: 40px 20px;
+}
+
+.chat-container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+    background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+    border: 1px solid #2a2a2a;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.messages {
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid #2ecc71;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    background: rgba(24, 31, 24, 0.5);
+}
+
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: rgba(46, 204, 113, 0.1);
+    border-left: 3px solid #2ecc71;
+    border-radius: 6px;
+}
+
+.message b {
+    color: #58d68d;
+    font-weight: bold;
+}
+
+.message-text {
+    color: #ddd;
+    margin-top: 5px;
+}
+
+form {
+    display: flex;
+    gap: 10px;
+}
+
+input {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1.5px solid #2ecc71;
+    background-color: #181f18;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 8px;
+    font-family: 'Segoe UI', sans-serif;
+    transition: all 0.3s ease;
+}
+
+input:focus {
+    background-color: #232f23;
+    border-color: #58d68d;
+    outline: none;
+    box-shadow: 0 2px 12px rgba(46, 204, 113, 0.2);
+}
+
+button {
+    padding: 12px 25px;
+    background: linear-gradient(45deg, #2ecc71, #58d68d);
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+h2 {
+    color: #2ecc71;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+}
+
+@media (max-width: 768px) {
+    header h1 {
+        font-size: 2rem;
+    }
+
+    main {
+        padding: 20px 10px;
+    }
+
+    .chat-container {
+        max-width: 100%;
+    }
+
+    .messages {
+        height: 300px;
+    }
+}
 </style>
 
 </head>
 
 <body>
-    <a href="{{ url_for('home') }}" class="back-btn">← Back</a>
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </button>
 
-<div class="chat-container">
+    <!-- Sliding Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <h3 class="menu-title">Navigation</h3>
+        <div class="menu-items">
+            <a href="{{ url_for('home') }}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('find_people') }}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Find people</span>
+            </a>
+            <a href="{{ url_for('jam_sessions') }}" class="menu-item">
+                <i class="fas fa-music"></i>
+                <span>Jam sessions</span>
+            </a>
+            <a href="{{ url_for('calendar') }}" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="{{ url_for('chat_page') }}" class="menu-item">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+            </a>
+        </div>
+    </div>
 
-<h2>Chat</h2>
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
 
-<div class="messages">
+    <header>
+        <h1>💬 Chat</h1>
+    </header>
 
-{% for message in messages %}
+    <main>
+        <div class="chat-container">
+            <h2>Messages</h2>
 
-<div class="message">
-<b>{{ message.user }}</b>: {{ message.text }}
-</div>
+            <div class="messages">
+                {% for message in messages %}
+                <div class="message">
+                    <b>{{ message.user }}</b>
+                    <div class="message-text">{{ message.text }}</div>
+                </div>
+                {% endfor %}
+            </div>
 
-{% endfor %}
+            <form method="POST">
+                <input type="text" name="message" placeholder="Write message..." required>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </main>
 
-</div>
+    <script>
+        // Menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
 
-<form method="POST">
+        menuToggle.addEventListener('click', function() {
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('open');
+        });
 
-<input type="text" name="message" placeholder="Write message..." required>
-
-<button type="submit">Send</button>
-
-</form>
-
-</div>
-
+        menuOverlay.addEventListener('click', function() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        });
+    </script>
 </body>
 
 </html>

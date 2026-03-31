@@ -4,6 +4,7 @@ import bcrypt, re
 import requests
 import datetime
 import math
+from urllib.parse import urlparse
 app = Flask(__name__)
 
 db = TinyDB('uporabniki.json')
@@ -355,6 +356,19 @@ Group = Query()
 group_messages_db = TinyDB('group_messages.json')
 GroupMessage = Query()
 
+
+def resolve_back_url(next_url, fallback_endpoint):
+    """Allow only local relative URLs as back target to avoid open redirects."""
+    fallback_url = url_for(fallback_endpoint)
+    if not next_url:
+        return fallback_url
+
+    parsed = urlparse(next_url)
+    is_local_relative = parsed.scheme == '' and parsed.netloc == '' and next_url.startswith('/') and not next_url.startswith('//')
+    if is_local_relative:
+        return next_url
+    return fallback_url
+
 @app.route('/chat', methods=['GET','POST'])
 def chat_page():
     if 'username' not in session:
@@ -367,16 +381,18 @@ def private_chat(recipient):
         return redirect(url_for('login'))
 
     sender = session['username']
+    raw_next = request.args.get('next') or request.form.get('next')
+    back_url = resolve_back_url(raw_next, 'private_messages')
 
     if sender == recipient:
         flash('Cannot send messages to yourself')
-        return redirect(url_for('private_messages'))
+        return redirect(back_url)
 
     # Check if recipient exists
     user_exists = db.get(Uporabnik.username == recipient)
     if not user_exists:
         flash('User not found')
-        return redirect(url_for('private_messages'))
+        return redirect(back_url)
 
     if request.method == 'POST':
         text = request.form.get('message')
@@ -388,7 +404,7 @@ def private_chat(recipient):
                 'timestamp': datetime.datetime.now().isoformat(),
                 'read': False
             })
-        return redirect(url_for('private_chat', recipient=recipient))
+        return redirect(url_for('private_chat', recipient=recipient, next=back_url))
 
     # Get messages between sender and recipient (both directions)
     messages = private_messages_db.search(
@@ -400,7 +416,7 @@ def private_chat(recipient):
     # Mark messages from recipient as read
     private_messages_db.update({'read': True}, (PrivateMessage.sender == recipient) & (PrivateMessage.recipient == sender) & (PrivateMessage.read == False))
 
-    return render_template('private_chat.html', messages=messages, recipient=recipient)
+    return render_template('private_chat.html', messages=messages, recipient=recipient, back_url=back_url)
 
 @app.route('/private_messages')
 def private_messages():
@@ -409,18 +425,52 @@ def private_messages():
 
     username = session['username']
 
-    # Get all users except current user
-    all_users = db.all()
-    users = [user for user in all_users if user.get('username') != username]
+    # Show only users with whom current user already has a private conversation.
+    # New chats are started from account page via /private_chat/<recipient>.
+    conversation_map = {}
+    all_private_messages = private_messages_db.all()
+    
+    for msg in all_private_messages:
+        sender = msg.get('sender')
+        recipient = msg.get('recipient')
+        
+        if sender != username and recipient != username:
+            continue
 
-    # Check for unread messages for each user
-    for user in users:
-        unread_count = private_messages_db.count(
-            (PrivateMessage.sender == user['username']) & 
-            (PrivateMessage.recipient == username) & 
-            (PrivateMessage.read == False)
-        )
-        user['unread_count'] = unread_count
+        other_user = recipient if sender == username else sender
+        timestamp = msg.get('timestamp', '')
+        text = msg.get('text', '')
+
+        if other_user not in conversation_map:
+            conversation_map[other_user] = {
+                'last_timestamp': timestamp,
+                'last_text': text,
+                'unread_count': 0
+            }
+        elif timestamp > conversation_map[other_user]['last_timestamp']:
+            conversation_map[other_user]['last_timestamp'] = timestamp
+            conversation_map[other_user]['last_text'] = text
+
+        if sender == other_user and recipient == username and not msg.get('read', False):
+            conversation_map[other_user]['unread_count'] += 1
+
+    users = []
+    for other_username, convo in conversation_map.items():
+        other_user = db.get(Uporabnik.username == other_username)
+        if not other_user:
+            continue
+
+        users.append({
+            'username': other_user.get('username', other_username),
+            'name': other_user.get('name', ''),
+            'surname': other_user.get('surname', ''),
+            'profile_picture': other_user.get('profile_picture', ''),
+            'unread_count': convo['unread_count'],
+            'last_message_text': convo['last_text'],
+            'last_timestamp': convo['last_timestamp']
+        })
+
+    users.sort(key=lambda u: u.get('last_timestamp', ''), reverse=True)
 
     # Get user's groups
     my_groups = groups_db.search(Group.members.test(lambda members: username in members))
@@ -507,16 +557,18 @@ def group_chat(group_id):
         return redirect(url_for('login'))
     
     username = session['username']
+    raw_next = request.args.get('next') or request.form.get('next')
+    back_url = resolve_back_url(raw_next, 'private_messages')
     group = groups_db.get(doc_id=group_id)
     
     if not group:
         flash('Group not found')
-        return redirect(url_for('groups_list'))
+        return redirect(back_url)
     
     # Check if user is member of group
     if username not in group.get('members', []):
         flash('You are not a member of this group')
-        return redirect(url_for('groups_list'))
+        return redirect(back_url)
     
     if request.method == 'POST':
         message_text = request.form.get('message')
@@ -527,7 +579,7 @@ def group_chat(group_id):
                 'text': message_text,
                 'timestamp': datetime.datetime.now().isoformat()
             })
-        return redirect(url_for('group_chat', group_id=group_id))
+        return redirect(url_for('group_chat', group_id=group_id, next=back_url))
     
     # Get all messages for this group
     messages = group_messages_db.search(GroupMessage.group_id == group_id)
@@ -540,7 +592,7 @@ def group_chat(group_id):
         if member:
             members.append(member)
     
-    return render_template('group_chat.html', group=group, messages=messages, members=members, group_id=group_id)
+    return render_template('group_chat.html', group=group, messages=messages, members=members, group_id=group_id, back_url=back_url)
 
 @app.route('/add_members/<int:group_id>', methods=['GET', 'POST'])
 def add_members(group_id):
@@ -588,6 +640,10 @@ def leave_group(group_id):
     if not group:
         flash('Group not found')
         return redirect(url_for('groups_list'))
+
+    if group.get('creator') == username:
+        flash('Group creator cannot leave. Delete the group instead.')
+        return redirect(url_for('group_chat', group_id=group_id))
     
     members = group.get('members', [])
     if username in members:
@@ -602,11 +658,172 @@ def leave_group(group_id):
             flash('You left the group')
     
     return redirect(url_for('groups_list'))
+
+
+@app.route('/delete_group/<int:group_id>', methods=['POST'])
+def delete_group(group_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    group = groups_db.get(doc_id=group_id)
+
+    if not group:
+        flash('Group not found')
+        return redirect(url_for('groups_list'))
+
+    if group.get('creator') != username:
+        flash('Only group creator can delete the group')
+        return redirect(url_for('group_chat', group_id=group_id))
+
+    groups_db.remove(doc_ids=[group_id])
+    group_messages_db.remove(GroupMessage.group_id == group_id)
+    flash('Group deleted successfully')
+    return redirect(url_for('groups_list'))
     
 
 
 
 
         
+# JAM SESSIONS
+jam_sessions_db = TinyDB('jam_sessions.json')
+JamSession = Query()
+
+@app.route('/jam_sessions')
+def jam_sessions():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    current_user = db.get(Uporabnik.username == username)
+    
+    # Get all active jam sessions
+    all_sessions = jam_sessions_db.all()
+    
+    # Calculate distances
+    distances = {}
+    if current_user and current_user.get('location'):
+        coord_me = geocode(current_user['location'])
+        if coord_me:
+            for session_doc in all_sessions:
+                if session_doc.get('location'):
+                    coord_session = geocode(session_doc['location'])
+                    if coord_session:
+                        distances[session_doc.doc_id] = round(haversine_km(coord_me, coord_session))
+    
+    return render_template('jam_sessions.html', sessions=all_sessions, distances=distances, current_user=current_user)
+
+@app.route('/create_jam_session', methods=['GET', 'POST'])
+def create_jam_session():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    current_user = db.get(Uporabnik.username == username)
+    
+    if request.method == 'POST':
+        title = request.form.get('title')
+        description = request.form.get('description')
+        location = request.form.get('location')
+        date_time = request.form.get('date_time')
+        genre = request.form.get('genre')
+        instruments_needed = request.form.getlist('instruments_needed')
+        max_participants = request.form.get('max_participants', 5)
+        
+        if not title or not location or not date_time:
+            flash('Title, location, and date/time are required')
+            return redirect(url_for('create_jam_session'))
+        
+        jam_sessions_db.insert({
+            'creator': username,
+            'title': title,
+            'description': description,
+            'location': location,
+            'date_time': date_time,
+            'genre': genre,
+            'instruments_needed': instruments_needed,
+            'max_participants': int(max_participants),
+            'participants': [username],
+            'created_at': datetime.datetime.now().isoformat()
+        })
+        
+        flash(f'Jam session "{title}" created successfully!')
+        return redirect(url_for('jam_sessions'))
+    
+    return render_template('create_jam_session.html', user=current_user)
+
+@app.route('/join_jam_session/<int:session_id>', methods=['POST'])
+def join_jam_session(session_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    jam_session = jam_sessions_db.get(doc_id=session_id)
+    
+    if not jam_session:
+        flash('Jam session not found')
+        return redirect(url_for('jam_sessions'))
+    
+    participants = jam_session.get('participants', [])
+    max_participants = jam_session.get('max_participants', 5)
+    
+    if username in participants:
+        flash('You are already a participant in this session')
+    elif len(participants) >= max_participants:
+        flash('This jam session is full')
+    else:
+        participants.append(username)
+        jam_sessions_db.update({'participants': participants}, doc_ids=[session_id])
+        flash(f'Successfully joined "{jam_session.get("title")}"!')
+    
+    return redirect(url_for('jam_sessions'))
+
+@app.route('/leave_jam_session/<int:session_id>', methods=['POST'])
+def leave_jam_session(session_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    username = session['username']
+    jam_session = jam_sessions_db.get(doc_id=session_id)
+    
+    if not jam_session:
+        flash('Jam session not found')
+        return redirect(url_for('jam_sessions'))
+    
+    participants = jam_session.get('participants', [])
+    
+    if username not in participants:
+        flash('You are not a participant in this session')
+    elif username == jam_session.get('creator'):
+        flash('Creator cannot leave the session')
+    else:
+        participants.remove(username)
+        jam_sessions_db.update({'participants': participants}, doc_ids=[session_id])
+        flash(f'You left the jam session')
+    
+    return redirect(url_for('jam_sessions'))
+
+
+@app.route('/delete_jam_session/<int:session_id>', methods=['POST'])
+def delete_jam_session(session_id):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    jam_session = jam_sessions_db.get(doc_id=session_id)
+
+    if not jam_session:
+        flash('Jam session not found')
+        return redirect(url_for('jam_sessions'))
+
+    if jam_session.get('creator') != username:
+        flash('Only host can delete this session')
+        return redirect(url_for('jam_sessions'))
+
+    jam_sessions_db.remove(doc_ids=[session_id])
+    flash('Jam session deleted')
+    return redirect(url_for('jam_sessions'))
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

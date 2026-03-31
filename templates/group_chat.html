@@ -396,6 +396,7 @@
             background: #222222;
             transform: scale(1.05);
         }
+
     </style>
 </head>
 <body>
@@ -403,7 +404,7 @@
         <!-- HEADER -->
         <div class="chat-header">
             <div class="header-left">
-                <a href="{{ url_for('private_messages') }}" class="back-btn">
+                <a href="{{ back_url }}" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                 </a>
                 <div class="group-info">
@@ -415,13 +416,15 @@
                 <button class="header-icon" id="membersBtn" title="Members">
                     <i class="fas fa-users"></i>
                 </button>
-                <button class="header-icon" title="Add members">
-                    <a href="{{ url_for('add_members', group_id=group.doc_id) }}" style="color: #333; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
-                        <i class="fas fa-user-plus"></i>
-                    </a>
-                </button>
-                <button class="header-icon" id="leaveGroupBtn" title="Leave group">
-                    <i class="fas fa-sign-out-alt"></i>
+                {% if session.username == group.creator %}
+                    <button class="header-icon" title="Add members">
+                        <a href="{{ url_for('add_members', group_id=group.doc_id) }}" style="color: #333; text-decoration: none; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                            <i class="fas fa-user-plus"></i>
+                        </a>
+                    </button>
+                {% endif %}
+                <button class="header-icon" id="groupActionBtn" data-is-creator="{% if session.username == group.creator %}true{% else %}false{% endif %}" title="{% if session.username == group.creator %}Delete group{% else %}Leave group{% endif %}">
+                    <i class="fas {% if session.username == group.creator %}fa-trash{% else %}fa-sign-out-alt{% endif %}"></i>
                 </button>
             </div>
         </div>
@@ -467,6 +470,7 @@
 
         <!-- MESSAGE FORM -->
         <form class="message-form" method="POST" id="messageForm">
+            <input type="hidden" name="next" value="{{ back_url }}">
             <div class="input-wrapper">
                 <button type="button" class="extra-btn">
                     <i class="fas fa-plus"></i>
@@ -493,7 +497,7 @@
         const messageForm = document.getElementById('messageForm');
         const membersBtn = document.getElementById('membersBtn');
         const membersModal = document.getElementById('membersModal');
-        const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+        const groupActionBtn = document.getElementById('groupActionBtn');
 
         // Auto scroll to bottom
         function scrollToBottom() {
@@ -514,15 +518,24 @@
             }
         });
 
-        // Leave group
-        leaveGroupBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to leave this group?')) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ url_for("leave_group", group_id=group.doc_id) }}';
-                document.body.appendChild(form);
-                form.submit();
+        // Group action: creator deletes, members leave
+        groupActionBtn.addEventListener('click', () => {
+            const isCreator = groupActionBtn.dataset.isCreator === 'true';
+            const confirmed = isCreator
+                ? confirm('Are you sure you want to delete this group? This cannot be undone.')
+                : confirm('Are you sure you want to leave this group?');
+
+            if (!confirmed) {
+                return;
             }
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = isCreator
+                ? '{{ url_for("delete_group", group_id=group.doc_id) }}'
+                : '{{ url_for("leave_group", group_id=group.doc_id) }}';
+            document.body.appendChild(form);
+            form.submit();
         });
 
         // Auto-grow textarea
@@ -541,6 +554,7 @@
 
         // Focus input on load
         messageInput.focus();
+
     </script>
 </body>
 </html>

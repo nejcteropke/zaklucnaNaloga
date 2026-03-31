@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Jam Session | BANDMADE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0d0d0d 0%, #121212 100%);
+            color: #f2f2f2;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(17, 17, 17, 0.95);
+            border-bottom: 2px solid #2ecc71;
+            padding: 20px 0;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            text-align: center;
+            color: #2ecc71;
+        }
+
+        /* Menu Toggle Button */
+        .menu-toggle {
+            font-size: 1.8rem;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            width: 50px;
+            height: 50px;
+            position: fixed;
+            left: 10px;
+            top: 15px;
+            z-index: 1000;
+            border-radius: 50%;
+            background: rgba(40, 40, 40, 0.8);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover {
+            background: rgba(60, 60, 60, 0.9);
+        }
+
+        .menu-toggle .dots {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .menu-toggle .dot {
+            width: 6px;
+            height: 6px;
+            background-color: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .menu-toggle:hover .dot {
+            background-color: #2ecc71;
+        }
+
+        /* Sliding Menu */
+        .side-menu {
+            position: fixed;
+            left: -350px;
+            top: 0;
+            width: 300px;
+            height: 100%;
+            background: rgba(15, 15, 15, 0.95);
+            z-index: 999;
+            padding: 100px 20px 40px;
+            transition: all 0.4s ease;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.5);
+            border-right: 1px solid #222;
+        }
+
+        .side-menu.open {
+            left: 0;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .menu-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .menu-item {
+            padding: 14px 20px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            background: rgba(40, 40, 40, 0.4);
+        }
+
+        .menu-item:hover {
+            background: rgba(46, 204, 113, 0.15);
+            transform: translateX(5px);
+        }
+
+        .menu-item i {
+            font-size: 1.2rem;
+            width: 24px;
+            color: #2ecc71;
+        }
+
+        .menu-title {
+            font-size: 1.2rem;
+            color: #999;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 3px solid #2ecc71;
+        }
+
+        main {
+            margin-top: 100px;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .form-container {
+            background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            animation: slideDown 0.6s ease;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            color: #2ecc71;
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        input[type="text"],
+        input[type="datetime-local"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1.5px solid #2ecc71;
+            background-color: #181f18;
+            color: #fff;
+            font-size: 1rem;
+            border-radius: 8px;
+            font-family: 'Segoe UI', sans-serif;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(46, 204, 113, 0.08);
+        }
+
+        input[type="text"]:focus,
+        input[type="datetime-local"]:focus,
+        input[type="number"]:focus,
+        select:focus,
+        textarea:focus {
+            background-color: #232f23;
+            border-color: #58d68d;
+            box-shadow: 0 2px 12px rgba(46, 204, 113, 0.2);
+            outline: none;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: rgba(40, 40, 40, 0.5);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(46, 204, 113, 0.1);
+            border-color: #2ecc71;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+            accent-color: #2ecc71;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            color: #ddd;
+            cursor: pointer;
+            font-weight: normal;
+            font-size: 0.95rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #2ecc71, #58d68d);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #27ae60, #2ecc71);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(40, 40, 40, 0.8);
+            color: #ccc;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(60, 60, 60, 0.9);
+            transform: translateY(-3px);
+        }
+
+        .form-title {
+            color: #2ecc71;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .form-subtitle {
+            color: #999;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .required {
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                padding: 20px 10px;
+            }
+
+            .form-container {
+                padding: 25px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .checkbox-group {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menu Toggle Button -->
+    <button class="menu-toggle" id="menuToggle">
+        <div class="dots">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </button>
+
+    <!-- Sliding Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <h3 class="menu-title">Navigation</h3>
+        <div class="menu-items">
+            <a href="{{ url_for('home') }}" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="{{ url_for('find_people') }}" class="menu-item">
+                <i class="fas fa-users"></i>
+                <span>Find people</span>
+            </a>
+            <a href="{{ url_for('jam_sessions') }}" class="menu-item">
+                <i class="fas fa-music"></i>
+                <span>Jam sessions</span>
+            </a>
+            <a href="{{ url_for('calendar') }}" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Events</span>
+            </a>
+            <a href="{{ url_for('chat_page') }}" class="menu-item">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Menu Overlay -->
+    <div class="menu-overlay" id="menuOverlay"></div>
+
+    <header>
+        <h1>Create Jam Session</h1>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2 class="form-title">🎸 New Session</h2>
+            <p class="form-subtitle">Organize an awesome jam session with other musicians</p>
+
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div style="background: rgba(220, 53, 69, 0.2); border-left: 3px solid #dc3545; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #ff9999;">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('create_jam_session') }}" method="POST">
+                <div class="form-group">
+                    <label for="title">Session Title <span class="required">*</span></label>
+                    <input type="text" id="title" name="title" placeholder="e.g., Friday Night Jam" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" placeholder="Tell musicians what this jam is about..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="location">Location <span class="required">*</span></label>
+                    <input type="text" id="location" name="location" placeholder="e.g., Ljubljana, Studio ABC" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="date_time">Date & Time <span class="required">*</span></label>
+                    <input type="datetime-local" id="date_time" name="date_time" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="genre">Genre</label>
+                    <select id="genre" name="genre">
+                        <option value="">Select a genre</option>
+                        <option value="Rock">Rock</option>
+                        <option value="Pop">Pop</option>
+                        <option value="Jazz">Jazz</option>
+                        <option value="Classical">Classical</option>
+                        <option value="Metal">Metal</option>
+                        <option value="Blues">Blues</option>
+                        <option value="Funk">Funk</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Instruments Needed</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="guitar" name="instruments_needed" value="Guitar">
+                            <label for="guitar">Guitar</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="drums" name="instruments_needed" value="Drums">
+                            <label for="drums">Drums</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="bass" name="instruments_needed" value="Bass">
+                            <label for="bass">Bass</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="vocals" name="instruments_needed" value="Vocals">
+                            <label for="vocals">Vocals</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="keyboards" name="instruments_needed" value="Keyboards">
+                            <label for="keyboards">Keyboards</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="other" name="instruments_needed" value="Other">
+                            <label for="other">Other</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="max_participants">Max Participants</label>
+                    <input type="number" id="max_participants" name="max_participants" value="5" min="2" max="20">
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-check"></i> Create Session
+                    </button>
+                    <a href="{{ url_for('jam_sessions') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sideMenu = document.getElementById('sideMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+
+        menuToggle.addEventListener('click', function() {
+            sideMenu.classList.toggle('open');
+            menuOverlay.classList.toggle('open');
+        });
+
+        menuOverlay.addEventListener('click', function() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+        });
+    </script>
+</body>
+</html>

@@ -49,9 +49,9 @@ h1{margin:0;}
     <div class="menu-items">
         <a href="{{ url_for('home') }}" class="menu-item"><i class="fas fa-home"></i><span>Home</span></a>
         <a href="{{ url_for('find_people') }}" class="menu-item"><i class="fas fa-users"></i><span>Find people</span></a>
-        <a href="{{ url_for('find_people') }}" class="menu-item"><i class="fas fa-search"></i><span>Išči glasbenike</span></a>
-        <a href="#" class="menu-item"><i class="fas fa-music"></i><span>Jam sessions</span></a>
-        <a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+        <a href="{{ url_for('jam_sessions') }}" class="menu-item"><i class="fas fa-music"></i><span>Jam sessions</span></a>
+        <a href="{{ url_for('calendar') }}" class="menu-item"><i class="fas fa-calendar-alt"></i><span>Events</span></a>
+        <a href="{{ url_for('chat_page') }}" class="menu-item"><i class="fas fa-comments"></i><span>Chat</span></a>
     </div>
 </div>
 
@@ -101,6 +101,14 @@ h1{margin:0;}
                 {% if user.instagram %}<a href="{{ user.instagram }}" target="_blank" class="social-link"><i class="fab fa-instagram"></i><span>Instagram</span></a>{% endif %}
                 {% if user.tiktok %}<a href="{{ user.tiktok }}" target="_blank" class="social-link"><i class="fab fa-tiktok"></i><span>TikTok</span></a>{% endif %}
             </div>
+        </div>
+        {% endif %}
+
+        {% if session.get('username') and session.get('username') != user.username %}
+        <div style="margin-top: 20px;">
+            <a href="{{ url_for('private_chat', recipient=user.username, next=url_for('find_people')) }}" class="back-button" style="margin: 0 auto;">
+                <i class="fas fa-comment"></i> Chat
+            </a>
         </div>
         {% endif %}
     </div>
