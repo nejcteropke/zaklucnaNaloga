@@ -99,7 +99,7 @@ def home():
 def profile():
     if 'username' not in session:
         flash('You need to login')
-        return(url_for('login'))
+        return redirect(url_for('login'))
     
     username = session['username']
     user = db.get(Uporabnik.username == username)
@@ -115,6 +115,8 @@ def edit_profile():
 #kreiranje profila in dodajanje "lastnosti"
 @app.route('/setup_profile', methods=['GET', 'POST'])
 def setup_profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
 
     username = session['username']
 
@@ -150,6 +152,8 @@ def logout():
 #urejanje profila | ni se dokoncan
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     username = session['username']
     user = db.get(Uporabnik.username == username)
     if request.method == 'POST':
